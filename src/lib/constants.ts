@@ -26,4 +26,4 @@ export const BANK_TRANSFER = {
 
 export const RESERVATION_DEADLINE = new Date("2026-07-31T23:59:59+09:00");
 // TEST MODE: set to past date so reservation button is always enabled
-export const RESERVATION_START = new Date("2026-01-01T00:00:00+09:00");
+export const RESERVATION_START = new Date("2026-05-28T09:00:00+09:00");
