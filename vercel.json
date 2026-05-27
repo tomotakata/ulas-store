@@ -3,7 +3,7 @@
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "framework": "nextjs",
-  "regions": ["nrt1"],
+
   "headers": [
     {
       "source": "/api/webhooks/stripe",
