@@ -1,38 +1,72 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Oswald:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Inter:wght@400;500;600;700;800;900&display=swap");
 
 @import "tailwindcss";
 
 :root {
-  --background: #050a14;
-  --foreground: #ffffff;
-  --accent-cyan: #22d3ee;
-  --accent-blue: #2563eb;
-  --font-display: "Oswald", sans-serif;
-  --font-body: "Noto Sans JP", sans-serif;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --col: 680px;
+  --font-body: "Noto Sans JP", "Inter", sans-serif;
+  --font-en: "Inter", sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-body), Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: #111111;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
 }
 
-/* LP section utility */
-.lp-section {
-  width: 100%;
-}
-
-.lp-content {
-  max-width: 600px;
+/* LP narrow column */
+.lp {
+  max-width: var(--col);
   margin-left: auto;
   margin-right: auto;
   padding-left: 1.25rem;
   padding-right: 1.25rem;
+}
+
+/* Image slider */
+.slider-track {
+  display: flex;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Section title style */
+.sec-title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #111;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+/* Feature divider */
+.feat-row + .feat-row {
+  border-top: 1px solid #e5e5e5;
+}
+
+/* Sticky buy bar */
+.buy-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid #e5e5e5;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  transform: translateY(0);
+  transition: transform 0.35s ease;
+}
+.buy-bar.hidden-bar {
+  transform: translateY(100%);
+}
+
+/* Scroll fade-in */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up {
+  animation: fadeUp 0.6s ease forwards;
 }
