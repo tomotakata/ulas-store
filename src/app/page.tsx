@@ -217,8 +217,8 @@ export default function HomePage() {
               >
                 {SLIDES.map((s) => (
                   <SwiperSlide key={s.src}>
-                    <div className="relative w-full h-full bg-gray-50">
-                      <Image src={s.src} alt={s.alt} fill style={{ objectFit: "cover" }}
+                    <div className="relative w-full h-full" style={{ background: "#f5f5f5" }}>
+                      <Image src={s.src} alt={s.alt} fill style={{ objectFit: "contain" }}
                         sizes="(max-width: 1024px) 100vw, 55vw" priority={s.src === SLIDES[0].src} />
                     </div>
                   </SwiperSlide>
