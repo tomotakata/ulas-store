@@ -80,13 +80,13 @@ function useReveal() {
 /* ─────────────────────────────────────
    Section title
 ───────────────────────────────────── */
-function SecTitle({ en, ja, center }: { en: string; ja: string; center?: boolean }) {
+function SecTitle({ en, ja, center, white }: { en: string; ja: string; center?: boolean; white?: boolean }) {
   return (
     <div className={`mb-8 md:mb-12 ${center ? "text-center" : ""}`}>
-      <p className="text-xs font-semibold tracking-[0.2em] text-gray-400 uppercase mb-2" style={{ fontFamily: "var(--font-en)" }}>
+      <p className={`text-xs font-semibold tracking-[0.2em] uppercase mb-2 ${white ? "text-white/60" : "text-gray-400"}`} style={{ fontFamily: "var(--font-en)" }}>
         {en}
       </p>
-      <h2 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight leading-tight">
+      <h2 className={`text-2xl md:text-3xl font-black tracking-tight leading-tight ${white ? "text-white" : "text-gray-900"}`}>
         {ja}
       </h2>
     </div>
@@ -622,7 +622,7 @@ export default function HomePage() {
       ══════════════════════════════════════════════════════ */}
       <section className="sec bg-black py-20 md:py-28">
         <div className="sec-inner-sm">
-          <div className="reveal"><SecTitle en="Why Pre-order" ja="今すぐ予約する3つの理由" /></div>
+          <div className="reveal"><SecTitle en="Why Pre-order" ja="今すぐ予約する3つの理由" white /></div>
           <div className="space-y-4 reveal">
             {[
               { n: "01", title: "先行予約特別価格", body: "定価¥19,800のところ、先行予約価格¥18,700（税込・送料込）でご購入いただけます。一般販売開始後は定価に戻ります。" },
