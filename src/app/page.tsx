@@ -420,15 +420,80 @@ export default function HomePage() {
       ══════════════════════════════════════════════════════ */}
       <section className="sec bg-white py-20 md:py-28">
         <div className="sec-inner">
-          <div className="reveal"><SecTitle en="Features" ja="ULAS O3 fingerの特徴" center /></div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 reveal">
-            {FEATURES.map(({ Icon, title, desc }) => (
-              <div key={title} className="feat-card rounded-2xl border border-gray-100 p-6 bg-white">
-                <div className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center mb-4">
-                  <Icon size={20} className="text-gray-700" strokeWidth={1.5} />
-                </div>
-                <h3 className="font-bold text-gray-900 text-sm mb-2 leading-snug">{title}</h3>
-                <p className="text-gray-500 text-xs leading-relaxed">{desc}</p>
+          {/* Title */}
+          <div className="reveal mb-12">
+            <h2 className="font-black text-3xl md:text-4xl text-gray-900 leading-tight">
+              ULAS O3 fingerが<br className="sm:hidden" />選ばれる理由
+            </h2>
+            <div className="mt-3" style={{ width: 40, height: 3, background: "#3b82f6", borderRadius: 9999 }} />
+          </div>
+
+          {/* 2×2 grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 reveal">
+            {/* Card 1 */}
+            <div className="rounded-2xl bg-gray-50 p-7 flex gap-5">
+              <div className="shrink-0 w-16 h-16 rounded-2xl bg-white border border-gray-100 flex items-center justify-center">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                  <path d="M5 12h-2M12 5V3M19 12h2" strokeOpacity="0.35"/>
+                  <text x="6" y="16" fontSize="7" fontWeight="bold" fill="#3b82f6" stroke="none">30</text>
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-900 text-base mb-1.5">約30秒でオゾン水を生成</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">水を入れてスイッチを押すだけ。<br />日常の清潔ケアに使いやすい<br />オゾン水を素早く生成</p>
+              </div>
+            </div>
+            {/* Card 2 */}
+            <div className="rounded-2xl bg-gray-50 p-7 flex gap-5">
+              <div className="shrink-0 w-16 h-16 rounded-2xl bg-white border border-gray-100 flex items-center justify-center">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 12l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2"/>
+                  <path d="M15 3s1 1 1 3" /><path d="M18 3s2 2 2 6" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-900 text-base mb-1.5">生成して、そのままスプレー</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">別の容器に移し替える必要なし。<br />本体とスプレーヘッドが一体型</p>
+              </div>
+            </div>
+            {/* Card 3 */}
+            <div className="rounded-2xl bg-gray-50 p-7 flex gap-5">
+              <div className="shrink-0 w-16 h-16 rounded-2xl bg-white border border-gray-100 flex items-center justify-center">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/>
+                  <path d="M16 10a4 4 0 0 1-8 0"/>
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-900 text-base mb-1.5">持ち運びやすい<br />コンパクト設計</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">H130mm × W32mm × D32mm。<br />バッグやポーチにも入れやすい<br />スリムサイズ</p>
+              </div>
+            </div>
+            {/* Card 4 */}
+            <div className="rounded-2xl bg-gray-50 p-7 flex gap-5">
+              <div className="shrink-0 w-16 h-16 rounded-2xl bg-white border border-gray-100 flex items-center justify-center">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="8" width="20" height="8" rx="4"/>
+                  <path d="M6 12h4" strokeWidth="2"/><circle cx="17" cy="12" r="1" fill="#3b82f6" stroke="none"/>
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-900 text-base mb-1.5">USB-C充電対応</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">外出先でも充電しやすく、<br />LEDで操作状況を確認できる設計</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div className="mt-10 rounded-2xl border border-gray-100 bg-gray-50 grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-gray-200 reveal">
+            {[
+              { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z"/><path d="M12 8v8M8 12h8" strokeOpacity="0.5"/><circle cx="12" cy="12" r="3" fill="#dbeafe" stroke="#3b82f6"/></svg>, text: "オゾン水で、毎日の清潔をもっと手軽に。" },
+              { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>, text: "シンプルな操作で、誰でも使いやすい。" },
+              { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>, text: "コンパクトだから、いつでもどこでも清潔ケアを。" },
+            ].map(({ icon, text }) => (
+              <div key={text} className="flex items-center gap-2.5 px-6 py-4 text-sm text-gray-600">
+                {icon}<span>{text}</span>
               </div>
             ))}
           </div>
