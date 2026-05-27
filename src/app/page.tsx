@@ -356,19 +356,62 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          § CATCH — full-bleed black
+          § CATCH — white, product intro
       ══════════════════════════════════════════════════════ */}
-      <section className="sec bg-black py-20 md:py-28">
+      <section className="sec bg-white py-20 md:py-28 border-b border-gray-100">
         <div className="sec-inner-sm text-center reveal">
-          <p className="text-white/40 text-xs tracking-[0.25em] uppercase mb-6" style={{ fontFamily: "var(--font-en)" }}>
-            The New Standard of Clean
+          {/* Product name */}
+          <p className="font-black text-4xl md:text-6xl tracking-tight text-gray-900 mb-3" style={{ fontFamily: "var(--font-en)" }}>
+            ULAS O3 finger
           </p>
-          <h2 className="text-white font-black text-3xl md:text-5xl leading-tight tracking-tight mb-6">
-            30秒でオゾン水を生成。<br />指先から、清潔をスプレー。
+          {/* Blue divider */}
+          <div className="mx-auto mb-6" style={{ width: 60, height: 3, background: "linear-gradient(90deg, #3b82f6, #60a5fa)", borderRadius: 9999 }} />
+          {/* Catchphrase */}
+          <h2 className="font-black text-3xl md:text-5xl leading-tight tracking-tight mb-5">
+            除菌消臭さえ、<span className="text-blue-500">美しく。</span>
           </h2>
-          <p className="text-white/50 text-sm md:text-base leading-relaxed max-w-md mx-auto">
-            洗剤・薬品不要。水から生まれたオゾン水で、あらゆる場所をクリーンに。
+          {/* Sub description */}
+          <p className="text-gray-500 text-sm md:text-base leading-relaxed max-w-sm mx-auto mb-12">
+            オゾン水が叶える、新しい清潔。<br />約30秒でオゾン水を生成するコンパクトスプレー
           </p>
+          {/* 3 icons */}
+          <div className="grid grid-cols-3 gap-6 max-w-md mx-auto">
+            {/* O3 */}
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-16 h-16 rounded-full border-2 border-blue-400 flex items-center justify-center">
+                <span className="text-blue-500 font-bold text-lg leading-none">O<sub className="text-xs">3</sub></span>
+              </div>
+              <p className="text-xs text-gray-600 leading-snug text-center">オゾンの力で<br />除菌・消臭</p>
+            </div>
+            {/* 30sec */}
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-16 h-16 rounded-full border-2 border-blue-400 flex items-center justify-center relative">
+                {/* circular arrow */}
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="absolute top-1 right-1 opacity-40">
+                  <path d="M21 12a9 9 0 1 1-9-9" stroke="#3b82f6" strokeWidth="1.5" strokeLinecap="round"/>
+                  <polyline points="21 3 21 9 15 9" stroke="#3b82f6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <div className="text-center leading-none">
+                  <p className="text-blue-500 font-black text-lg">30</p>
+                  <p className="text-blue-400 text-[10px] tracking-widest">sec</p>
+                </div>
+              </div>
+              <p className="text-xs text-gray-600 leading-snug text-center">約30秒で<br />オゾン水を生成</p>
+            </div>
+            {/* compact */}
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-16 h-16 rounded-full border-2 border-blue-400 flex items-center justify-center">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="9" y="2" width="6" height="12" rx="2"/>
+                  <path d="M12 14v4"/>
+                  <path d="M8 20c0-1.1 1.8-2 4-2s4 .9 4 2"/>
+                  <path d="M7 10c-1.5.5-2.5 1.5-2.5 3"/>
+                  <path d="M17 10c1.5.5 2.5 1.5 2.5 3"/>
+                </svg>
+              </div>
+              <p className="text-xs text-gray-600 leading-snug text-center">コンパクトで<br />持ち運びに便利</p>
+            </div>
+          </div>
         </div>
       </section>
 
