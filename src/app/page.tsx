@@ -32,8 +32,8 @@ function useCountdown(target: Date) {
 function CountdownUnit({ value, label }: { value: number; label: string }) {
   return (
     <div className="flex flex-col items-center">
-      <div className="bg-white/10 backdrop-blur rounded-xl px-4 py-3 min-w-[70px] text-center border border-white/20">
-        <span className="text-3xl sm:text-4xl font-bold text-white tabular-nums">
+      <div className="bg-white/10 backdrop-blur rounded-xl px-2 py-2 sm:px-4 sm:py-3 min-w-[52px] sm:min-w-[70px] text-center border border-white/20">
+        <span className="text-2xl sm:text-4xl font-bold text-white tabular-nums">
           {String(value).padStart(2, "0")}
         </span>
       </div>
@@ -99,11 +99,11 @@ export default function HomePage() {
           <p className="text-xl sm:text-2xl text-white/70 mb-3 font-light">
             水からオゾン水を生成する、新感覚の除菌・消臭デバイス
           </p>
-          <div className="flex items-center justify-center gap-4 mb-10">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mb-10">
             <span className="text-4xl sm:text-5xl font-black text-white">
               ¥{PRODUCT.price.toLocaleString()}
             </span>
-            <div className="flex flex-col items-start">
+            <div className="flex items-center sm:flex-col sm:items-start gap-3 sm:gap-0">
               <span className="text-base text-white/40 line-through">
                 ¥{PRODUCT.originalPrice.toLocaleString()}
               </span>
@@ -191,8 +191,8 @@ export default function HomePage() {
           <h2 className="text-3xl font-bold text-white text-center mb-12">製品仕様</h2>
           <div className="rounded-2xl overflow-hidden border border-white/10">
             {SPECS.map((spec, i) => (
-              <div key={spec.label} className={`flex gap-4 px-6 py-4 ${i % 2 === 0 ? "bg-white/5" : "bg-transparent"}`}>
-                <span className="text-white/50 text-sm min-w-[130px]">{spec.label}</span>
+              <div key={spec.label} className={`flex flex-col sm:flex-row sm:gap-4 px-6 py-3 ${i % 2 === 0 ? "bg-white/5" : "bg-transparent"}`}>
+                <span className="text-white/50 text-xs sm:text-sm sm:min-w-[130px] mb-0.5 sm:mb-0">{spec.label}</span>
                 <span className="text-white text-sm font-medium">{spec.value}</span>
               </div>
             ))}
