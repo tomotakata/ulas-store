@@ -537,53 +537,10 @@ export default function HomePage() {
           {/* 4 steps */}
           <div className="reveal grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              {
-                n: "1", title: "本体タンクに水を入れる", desc: "水道水または専用水をタンクに注入",
-                icon: (
-                  <svg width="48" height="48" viewBox="0 0 52 52" fill="none">
-                    <rect x="12" y="24" width="28" height="20" rx="3" stroke="#3b82f6" strokeWidth="2"/>
-                    <path d="M26 8v16M20 14l6-6 6 6" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <ellipse cx="26" cy="36" rx="10" ry="4" fill="#dbeafe"/>
-                  </svg>
-                ),
-              },
-              {
-                n: "2", title: "スイッチを押す", desc: "電源ボタンを押してオゾン水の生成を開始",
-                icon: (
-                  <svg width="48" height="48" viewBox="0 0 52 52" fill="none">
-                    <circle cx="26" cy="26" r="16" stroke="#3b82f6" strokeWidth="2"/>
-                    <path d="M26 15v11" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round"/>
-                    <path d="M18 19a11 11 0 1 0 16 0" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
-                ),
-              },
-              {
-                n: "3", title: "約30秒で生成完了", desc: "LEDが点灯し、生成完了をお知らせ",
-                icon: (
-                  <svg width="48" height="48" viewBox="0 0 52 52" fill="none">
-                    <circle cx="26" cy="28" r="14" stroke="#3b82f6" strokeWidth="2" strokeDasharray="2.5 2"/>
-                    <circle cx="26" cy="28" r="10" stroke="#93c5fd" strokeWidth="1.5"/>
-                    <text x="26" y="32" textAnchor="middle" fontSize="11" fontWeight="800" fill="#3b82f6" fontFamily="sans-serif">30</text>
-                    <text x="26" y="39" textAnchor="middle" fontSize="6.5" fill="#3b82f6" fontFamily="sans-serif">秒</text>
-                    <path d="M26 14V11" stroke="#3b82f6" strokeWidth="1.8" strokeLinecap="round"/>
-                  </svg>
-                ),
-              },
-              {
-                n: "4", title: "気になる場所にスプレー", desc: "手動ポンプ式スプレーで必要な場所に直接噴霧",
-                icon: (
-                  <svg width="48" height="48" viewBox="0 0 52 52" fill="none">
-                    <rect x="16" y="24" width="14" height="20" rx="2" stroke="#3b82f6" strokeWidth="2"/>
-                    <rect x="19" y="17" width="6" height="7" rx="1" stroke="#3b82f6" strokeWidth="2"/>
-                    <path d="M25 20h5a2 2 0 0 1 2 2v2H25" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M32 22.5h3" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round"/>
-                    <circle cx="38" cy="19" r="1.2" fill="#3b82f6"/>
-                    <circle cx="40" cy="22.5" r="1.2" fill="#3b82f6"/>
-                    <circle cx="40" cy="16" r="1" fill="#93c5fd"/>
-                    <circle cx="42" cy="19.5" r="1" fill="#93c5fd"/>
-                  </svg>
-                ),
-              },
+              { n: "1", title: "本体タンクに水を入れる", desc: "水道水または専用水をタンクに注入",        icon: "/images/step-icon-1.png" },
+              { n: "2", title: "スイッチを押す",         desc: "電源ボタンを押してオゾン水の生成を開始", icon: "/images/step-icon-2.png" },
+              { n: "3", title: "約30秒で生成完了",       desc: "LEDが点灯し、生成完了をお知らせ",       icon: "/images/step-icon-3.png" },
+              { n: "4", title: "気になる場所にスプレー", desc: "手動ポンプ式スプレーで必要な場所に直接噴霧", icon: "/images/step-icon-4.png" },
             ].map((step, i) => (
               <div key={step.n} className="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col">
                 {/* step number */}
@@ -592,8 +549,10 @@ export default function HomePage() {
                   <div className="mt-1" style={{ width: 24, height: 2, background: "#3b82f6", borderRadius: 9999 }} />
                 </div>
                 {/* icon */}
-                <div className="flex items-center justify-center h-14 mb-4">{step.icon}</div>
-                {/* text — flex-1 pushes arrow to bottom */}
+                <div className="flex items-center justify-center h-14 mb-4">
+                  <Image src={step.icon} alt={step.title} width={56} height={56} style={{ objectFit: "contain" }} />
+                </div>
+                {/* text */}
                 <div className="flex-1">
                   <h3 className="font-bold text-gray-900 text-sm md:text-base mb-1 leading-snug">{step.title}</h3>
                   <p className="text-gray-400 text-xs leading-relaxed">{step.desc}</p>
