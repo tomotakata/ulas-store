@@ -459,14 +459,20 @@ export default function HomePage() {
             <div className="rounded-2xl bg-gray-50 p-7 flex gap-5">
               <div className="shrink-0 w-16 h-16 rounded-2xl bg-white border border-gray-100 flex items-center justify-center">
                 {/* Spray bottle */}
-                <svg width="36" height="36" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18 38V22h-4v-6h4v-4h8v4l4 4v4h-4v14H18z" stroke="#3b82f6" strokeWidth="2.5" strokeLinejoin="round"/>
-                  <path d="M26 16h6" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round"/>
-                  <circle cx="36" cy="13" r="1.2" fill="#3b82f6"/>
-                  <circle cx="39" cy="17" r="1.2" fill="#3b82f6"/>
-                  <circle cx="40" cy="11" r="1.2" fill="#3b82f6"/>
-                  <circle cx="38" cy="21" r="1" fill="#3b82f6"/>
-                  <circle cx="42" cy="15" r="1" fill="#3b82f6"/>
+                <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  {/* bottle body */}
+                  <rect x="6" y="16" width="14" height="14" rx="2" stroke="#3b82f6" strokeWidth="2"/>
+                  {/* neck */}
+                  <rect x="9" y="11" width="5" height="5" rx="1" stroke="#3b82f6" strokeWidth="2"/>
+                  {/* trigger arm */}
+                  <path d="M14 13.5h5a2 2 0 0 1 2 2v1H14" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  {/* nozzle */}
+                  <path d="M21 15.5h3" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round"/>
+                  {/* mist dots */}
+                  <circle cx="27" cy="12" r="1.1" fill="#3b82f6"/>
+                  <circle cx="29" cy="15" r="1.1" fill="#3b82f6"/>
+                  <circle cx="29" cy="9"  r="0.9" fill="#3b82f6"/>
+                  <circle cx="31" cy="12" r="0.9" fill="#3b82f6"/>
                 </svg>
               </div>
               <div>
