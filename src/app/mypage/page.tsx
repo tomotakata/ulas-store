@@ -296,7 +296,7 @@ export default function MyPage() {
                     )}
 
                     {/* Bank transfer notice */}
-                    {r.paymentMethod === "BANK" && r.paymentStatus === "PENDING" && (
+                    {r.paymentMethod === "BANK_TRANSFER" && r.paymentStatus === "PENDING" && (
                       <div className="px-6 py-4 bg-amber-50 border-t border-amber-100 text-xs text-amber-700">
                         <p className="font-semibold mb-1">お振込みをお待ちしております</p>
                         <p>ご注文日より3営業日以内にお振込みください。確認後、予約確定となります。</p>
