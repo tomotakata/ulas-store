@@ -582,23 +582,17 @@ export default function HomePage() {
       <section className="sec bg-white py-20 md:py-28">
         <div className="sec-inner">
           <div className="reveal"><SecTitle en="Use Cases" ja="あらゆる場面で活躍" center /></div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 reveal">
-            {SCENES.map((sc, i) => {
-              const Icon = SCENE_ICONS[i];
-              return (
-                <div key={sc.label}
-                  className="feat-card rounded-2xl p-5 flex flex-col gap-3 border border-gray-100"
-                  style={{ background: SCENE_BG[i] }}>
-                  <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: `${SCENE_COLOR[i]}18` }}>
-                    <Icon size={18} strokeWidth={1.5} style={{ color: SCENE_COLOR[i] }} />
-                  </div>
-                  <div>
-                    <p className="font-bold text-gray-900 text-sm">{sc.label}</p>
-                    <p className="text-gray-500 text-xs mt-1 leading-relaxed">{sc.desc}</p>
-                  </div>
-                </div>
-              );
-            })}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 reveal">
+            {[
+              { img: "/images/usecase-1.png", alt: "毎日のスキンケアに" },
+              { img: "/images/usecase-2.png", alt: "外出先での清潔ケア" },
+              { img: "/images/usecase-3.png", alt: "デスクまわりや身の回りのケア" },
+              { img: "/images/usecase-4.png", alt: "キッチンまわりのケア" },
+            ].map((uc) => (
+              <div key={uc.alt} className="rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+                <Image src={uc.img} alt={uc.alt} width={800} height={400} style={{ width: "100%", height: "auto", display: "block" }} />
+              </div>
+            ))}
           </div>
         </div>
       </section>
