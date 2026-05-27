@@ -11,6 +11,9 @@ export async function middleware(req: NextRequest) {
 
   // /admin のみ認証保護（/mypage は page.tsx 側でログインフォームを表示）
   if (pathname.startsWith("/admin")) {
+    // /admin/login は保護しない
+    if (pathname === "/admin/login") return NextResponse.next();
+
     const token = req.cookies.get(COOKIE_NAME)?.value;
     let session = null;
     if (token) {
@@ -22,7 +25,7 @@ export async function middleware(req: NextRequest) {
       }
     }
     if (!session || !session.isAdmin) {
-      return NextResponse.redirect(new URL("/", req.url));
+      return NextResponse.redirect(new URL("/admin/login", req.url));
     }
   }
 
@@ -30,5 +33,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/admin"],
 };
