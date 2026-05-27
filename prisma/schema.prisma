@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String?
+  phone         String?
+  isAdmin       Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  reservations  Reservation[]
+}
+
+model Product {
+  id              String    @id @default(cuid())
+  name            String
+  description     String
+  price           Int
+  originalPrice   Int
+  stock           Int       @default(0)
+  acceptingOrders Boolean   @default(false)
+  stripeProductId String?
+  stripePriceId   String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  reservations    Reservation[]
+}
+
+model Reservation {
+  id                String            @id @default(cuid())
+  userId            String
+  productId         String
+  quantity          Int               @default(1)
+  totalAmount       Int
+  paymentMethod     PaymentMethod
+  paymentStatus     PaymentStatus     @default(PENDING)
+  reservationStatus ReservationStatus @default(WAITING)
+  stripeSessionId   String?
+  stripePaymentIntentId String?
+  bankTransferNote  String?
+  shippingName      String
+  shippingZip       String
+  shippingAddress   String
+  shippingPhone     String
+  notes             String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  user              User              @relation(fields: [userId], references: [id])
+  product           Product           @relation(fields: [productId], references: [id])
+}
+
+enum PaymentMethod {
+  CARD
+  BANK_TRANSFER
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum ReservationStatus {
+  WAITING
+  CONFIRMED
+  SHIPPING
+  DELIVERED
+  CANCELLED
+}
