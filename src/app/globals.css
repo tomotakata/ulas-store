@@ -110,6 +110,11 @@ body {
 .spec-row { border-bottom: 1px solid var(--clr-border); }
 .spec-row:last-child { border-bottom: none; }
 
+/* ── Hero slider responsive height ── */
+.hero-slider { height: min(45vw, 480px); }
+@media (max-width: 1023px) { .hero-slider { height: 350px; } }
+@media (max-width: 639px)  { .hero-slider { height: 280px; } }
+
 /* ── Fade-in on scroll ── */
 .reveal {
   opacity: 0;

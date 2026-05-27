@@ -204,7 +204,7 @@ export default function HomePage() {
           <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
 
             {/* — Slider — */}
-            <div className="w-full lg:w-[55%] lg:sticky lg:top-24">
+            <div className="w-full lg:w-[55%] lg:sticky lg:top-20">
               <Swiper
                 modules={[Navigation, Pagination, Thumbs, Autoplay]}
                 thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
@@ -212,13 +212,13 @@ export default function HomePage() {
                 pagination={{ clickable: true }}
                 autoplay={{ delay: 4500, disableOnInteraction: true }}
                 loop
-                className="rounded-2xl overflow-hidden border border-gray-100"
-                style={{ aspectRatio: "1 / 1" }}
+                className="rounded-2xl overflow-hidden border border-gray-100 hero-slider"
+                style={{ height: "min(45vw, 480px)" }}
               >
                 {SLIDES.map((s) => (
                   <SwiperSlide key={s.src}>
-                    <div className="relative w-full h-full bg-gray-50 flex items-center justify-center" style={{ aspectRatio: "1/1" }}>
-                      <Image src={s.src} alt={s.alt} fill style={{ objectFit: "contain" }}
+                    <div className="relative w-full h-full bg-gray-50">
+                      <Image src={s.src} alt={s.alt} fill style={{ objectFit: "cover" }}
                         sizes="(max-width: 1024px) 100vw, 55vw" priority={s.src === SLIDES[0].src} />
                     </div>
                   </SwiperSlide>
