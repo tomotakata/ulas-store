@@ -535,46 +535,44 @@ export default function HomePage() {
           </div>
 
           {/* 4 steps */}
-          <div className="reveal flex flex-col md:flex-row items-stretch gap-3 md:gap-2">
+          <div className="reveal grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               {
                 n: "1", title: "本体タンクに水を入れる", desc: "水道水または専用水をタンクに注入",
                 icon: (
-                  <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+                  <svg width="48" height="48" viewBox="0 0 52 52" fill="none">
                     <rect x="12" y="24" width="28" height="20" rx="3" stroke="#3b82f6" strokeWidth="2"/>
                     <path d="M26 8v16M20 14l6-6 6 6" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M14 34 Q26 30 38 34" stroke="#93c5fd" strokeWidth="1.5" strokeLinecap="round"/>
-                    <ellipse cx="26" cy="36" rx="10" ry="4" fill="#dbeafe" stroke="none"/>
+                    <ellipse cx="26" cy="36" rx="10" ry="4" fill="#dbeafe"/>
                   </svg>
                 ),
               },
               {
                 n: "2", title: "スイッチを押す", desc: "電源ボタンを押してオゾン水の生成を開始",
                 icon: (
-                  <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+                  <svg width="48" height="48" viewBox="0 0 52 52" fill="none">
                     <circle cx="26" cy="26" r="16" stroke="#3b82f6" strokeWidth="2"/>
-                    <circle cx="26" cy="26" r="11" stroke="#93c5fd" strokeWidth="1.5" strokeDasharray="3 2"/>
                     <path d="M26 15v11" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round"/>
-                    <path d="M18 19a11 11 0 1 0 16 0" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                    <path d="M18 19a11 11 0 1 0 16 0" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round"/>
                   </svg>
                 ),
               },
               {
                 n: "3", title: "約30秒で生成完了", desc: "LEDが点灯し、生成完了をお知らせ",
                 icon: (
-                  <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+                  <svg width="48" height="48" viewBox="0 0 52 52" fill="none">
                     <circle cx="26" cy="28" r="14" stroke="#3b82f6" strokeWidth="2" strokeDasharray="2.5 2"/>
                     <circle cx="26" cy="28" r="10" stroke="#93c5fd" strokeWidth="1.5"/>
-                    <text x="26" y="31" textAnchor="middle" fontSize="11" fontWeight="800" fill="#3b82f6" fontFamily="sans-serif">30</text>
+                    <text x="26" y="32" textAnchor="middle" fontSize="11" fontWeight="800" fill="#3b82f6" fontFamily="sans-serif">30</text>
                     <text x="26" y="39" textAnchor="middle" fontSize="6.5" fill="#3b82f6" fontFamily="sans-serif">秒</text>
-                    <path d="M26 14V11M20 12l-2-3M32 12l2-3" stroke="#3b82f6" strokeWidth="1.8" strokeLinecap="round"/>
+                    <path d="M26 14V11" stroke="#3b82f6" strokeWidth="1.8" strokeLinecap="round"/>
                   </svg>
                 ),
               },
               {
                 n: "4", title: "気になる場所にスプレー", desc: "手動ポンプ式スプレーで必要な場所に直接噴霧",
                 icon: (
-                  <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+                  <svg width="48" height="48" viewBox="0 0 52 52" fill="none">
                     <rect x="16" y="24" width="14" height="20" rx="2" stroke="#3b82f6" strokeWidth="2"/>
                     <rect x="19" y="17" width="6" height="7" rx="1" stroke="#3b82f6" strokeWidth="2"/>
                     <path d="M25 20h5a2 2 0 0 1 2 2v2H25" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -583,29 +581,29 @@ export default function HomePage() {
                     <circle cx="40" cy="22.5" r="1.2" fill="#3b82f6"/>
                     <circle cx="40" cy="16" r="1" fill="#93c5fd"/>
                     <circle cx="42" cy="19.5" r="1" fill="#93c5fd"/>
-                    <circle cx="38" cy="26" r="1" fill="#93c5fd"/>
                   </svg>
                 ),
               },
             ].map((step, i) => (
-              <div key={step.n} className="flex md:flex-col items-center md:items-start gap-4 md:gap-0 flex-1">
-                {/* card */}
-                <div className="flex-1 w-full bg-white border border-gray-200 rounded-2xl p-5 md:p-6">
-                  {/* step number */}
-                  <div className="mb-3">
-                    <span className="text-4xl font-black italic text-blue-500 leading-none" style={{ fontFamily: "Georgia, serif" }}>{step.n}</span>
-                    <div className="mt-1" style={{ width: 24, height: 2, background: "#3b82f6", borderRadius: 9999 }} />
-                  </div>
-                  {/* icon */}
-                  <div className="mb-4 flex items-center justify-center h-14">{step.icon}</div>
-                  {/* text */}
-                  <h3 className="font-bold text-gray-900 text-sm md:text-base mb-1 leading-snug">{step.title}</h3>
-                  <p className="text-gray-400 text-xs md:text-sm leading-relaxed">{step.desc}</p>
+              <div key={step.n} className="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col">
+                {/* step number */}
+                <div className="mb-4">
+                  <span className="text-4xl font-black italic text-blue-500 leading-none" style={{ fontFamily: "Georgia, serif" }}>{step.n}</span>
+                  <div className="mt-1" style={{ width: 24, height: 2, background: "#3b82f6", borderRadius: 9999 }} />
                 </div>
-                {/* arrow between cards */}
+                {/* icon */}
+                <div className="flex items-center justify-center h-14 mb-4">{step.icon}</div>
+                {/* text — flex-1 pushes arrow to bottom */}
+                <div className="flex-1">
+                  <h3 className="font-bold text-gray-900 text-sm md:text-base mb-1 leading-snug">{step.title}</h3>
+                  <p className="text-gray-400 text-xs leading-relaxed">{step.desc}</p>
+                </div>
+                {/* arrow at bottom (except last card) */}
                 {i < 3 && (
-                  <div className="shrink-0 text-blue-400 rotate-90 md:rotate-0 md:self-center md:-mx-1 md:mt-[-40px]">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#3b82f6"><path d="M5 12h14M13 6l6 6-6 6" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>
+                  <div className="mt-4 pt-3 border-t border-gray-100">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M13 6l6 6-6 6"/>
+                    </svg>
                   </div>
                 )}
               </div>
