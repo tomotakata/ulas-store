@@ -594,6 +594,9 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+          <div className="reveal mt-6 rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+            <Image src="/images/usecase-banner.png" alt="スキンケア領域への応用にも着目" width={1400} height={700} style={{ width: "100%", height: "auto", display: "block" }} />
+          </div>
         </div>
       </section>
 
