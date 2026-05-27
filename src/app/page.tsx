@@ -603,6 +603,9 @@ export default function HomePage() {
       <section className="sec py-20 md:py-28" style={{ background: "#f7f7f7" }}>
         <div className="sec-inner-sm">
           <div className="reveal"><SecTitle en="Specifications" ja="製品仕様" /></div>
+          <div className="reveal rounded-2xl overflow-hidden mb-8">
+            <Image src="/images/spec-banner.png" alt="日本製品質を前提にした開発" width={1200} height={600} style={{ width: "100%", height: "auto", display: "block" }} />
+          </div>
           <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden reveal">
             {SPECS.map((s) => (
               <div key={s.label} className="spec-row flex items-start gap-4 px-6 py-4">
