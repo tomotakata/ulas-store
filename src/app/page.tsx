@@ -629,11 +629,11 @@ export default function HomePage() {
               { n: "02", title: "先着順発送", body: "予約順に発送します。早くご予約いただくほど、お手元に早く届きます。" },
               { n: "03", title: "予約期間限定〜7/31", body: "先行予約は2026年7月31日まで。期間終了後は予約受付を終了し、一般販売（定価）に切り替わります。" },
             ].map((r) => (
-              <div key={r.n} className="flex gap-5 p-6 rounded-2xl border border-white/10 bg-white/5">
-                <span className="text-white/15 font-black text-4xl shrink-0 leading-none" style={{ fontFamily: "var(--font-en)" }}>{r.n}</span>
+              <div key={r.n} className="flex gap-5 p-6 rounded-2xl border border-white/20 bg-white/10">
+                <span className="text-blue-400 font-black text-4xl shrink-0 leading-none" style={{ fontFamily: "var(--font-en)" }}>{r.n}</span>
                 <div>
-                  <h3 className="text-white font-bold text-sm mb-2">{r.title}</h3>
-                  <p className="text-white/50 text-sm leading-relaxed">{r.body}</p>
+                  <h3 className="text-white font-bold text-base mb-2">{r.title}</h3>
+                  <p className="text-white/80 text-sm leading-relaxed">{r.body}</p>
                 </div>
               </div>
             ))}
