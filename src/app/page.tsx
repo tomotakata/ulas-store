@@ -318,10 +318,16 @@ export default function HomePage() {
               </div>
 
               {/* CTA */}
-              <Link href="#reservation"
-                className="block w-full text-center bg-black hover:bg-gray-900 active:scale-[0.99] text-white font-bold text-base py-4 rounded-xl transition-all mb-3">
-                今すぐ先行予約する →
-              </Link>
+              {open ? (
+                <Link href="#reservation"
+                  className="block w-full text-center bg-black hover:bg-gray-900 active:scale-[0.99] text-white font-bold text-base py-4 rounded-xl transition-all mb-3">
+                  今すぐ先行予約する →
+                </Link>
+              ) : (
+                <div className="block w-full text-center bg-gray-200 text-gray-400 font-bold text-base py-4 rounded-xl mb-3 cursor-not-allowed select-none">
+                  5/28 9:00より受付開始
+                </div>
+              )}
               <p className="text-center text-xs text-gray-400">先着順発送 · 予約締切 7/31 · クレカ / 銀行振込</p>
 
               {/* Mini trust badges (in buy box) */}
@@ -655,6 +661,14 @@ export default function HomePage() {
       <section id="reservation" ref={formRef} className="sec bg-white py-20 md:py-28">
         <div className="sec-inner-sm">
           <div className="reveal"><SecTitle en="Pre-order" ja="先行予約フォーム" /></div>
+          {!open ? (
+            <div className="rounded-2xl border border-gray-200 bg-gray-50 p-10 text-center reveal">
+              <p className="text-2xl font-black text-gray-400 mb-2">受付開始前です</p>
+              <p className="text-gray-500 text-sm">2026年5月28日（木）午前9:00より予約受付を開始します。</p>
+              <p className="text-gray-500 text-sm mt-1">もうしばらくお待ちください。</p>
+            </div>
+          ) : (
+          <>
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-50 border border-gray-100 rounded-2xl px-6 py-5 mb-8 reveal">
             <div>
               <p className="text-xs text-gray-400 mb-0.5">先行予約特別価格</p>
@@ -677,6 +691,8 @@ export default function HomePage() {
           <div className="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-sm reveal">
             <ReservationForm />
           </div>
+          </>
+          )}
         </div>
       </section>
 
@@ -726,10 +742,16 @@ export default function HomePage() {
             <div className="flex-1 block sm:hidden">
               <p className="font-black text-base text-black" style={{ fontFamily: "var(--font-en)" }}>¥18,700 <span className="text-gray-400 text-xs font-normal">税込</span></p>
             </div>
-            <Link href="#reservation"
-              className="ml-auto shrink-0 bg-black hover:bg-gray-900 text-white font-bold text-sm px-8 py-3.5 rounded-xl transition-colors whitespace-nowrap">
-              今すぐ先行予約する →
-            </Link>
+            {open ? (
+              <Link href="#reservation"
+                className="ml-auto shrink-0 bg-black hover:bg-gray-900 text-white font-bold text-sm px-8 py-3.5 rounded-xl transition-colors whitespace-nowrap">
+                今すぐ先行予約する →
+              </Link>
+            ) : (
+              <div className="ml-auto shrink-0 bg-gray-200 text-gray-400 font-bold text-sm px-8 py-3.5 rounded-xl whitespace-nowrap cursor-not-allowed">
+                5/28 9:00より受付開始
+              </div>
+            )}
           </div>
         </div>
       </div>
