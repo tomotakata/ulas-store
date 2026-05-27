@@ -1,72 +1,122 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Inter:wght@400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap");
 
 @import "tailwindcss";
 
+/* Swiper CSS */
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/pagination";
+@import "swiper/css/thumbs";
+@import "swiper/css/free-mode";
+
 :root {
-  --col: 680px;
-  --font-body: "Noto Sans JP", "Inter", sans-serif;
-  --font-en: "Inter", sans-serif;
+  --font-en: "Inter", system-ui, sans-serif;
+  --font-jp: "Noto Sans JP", sans-serif;
+  --clr-bg: #ffffff;
+  --clr-surface: #f7f7f7;
+  --clr-border: #e8e8e8;
+  --clr-text: #111111;
+  --clr-muted: #888888;
+  --clr-accent: #111111;
 }
 
+* { box-sizing: border-box; }
+
 body {
-  background: #ffffff;
-  color: #111111;
-  font-family: var(--font-body);
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  font-family: var(--font-jp);
   -webkit-font-smoothing: antialiased;
 }
 
-/* LP narrow column */
-.lp {
-  max-width: var(--col);
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
+/* ── Swiper overrides ── */
+.swiper-pagination-bullet {
+  background: #ccc;
+  opacity: 1;
+  width: 6px;
+  height: 6px;
 }
-
-/* Image slider */
-.slider-track {
-  display: flex;
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+.swiper-pagination-bullet-active {
+  background: #111;
+  width: 20px;
+  border-radius: 3px;
 }
-
-/* Section title style */
-.sec-title {
-  font-size: 1.5rem;
-  font-weight: 900;
+.swiper-button-next,
+.swiper-button-prev {
   color: #111;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  background: rgba(255,255,255,0.9);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 14px;
+  font-weight: 700;
+}
+.thumb-swiper .swiper-slide {
+  opacity: 0.45;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.thumb-swiper .swiper-slide-thumb-active {
+  opacity: 1;
+  border-color: #111;
 }
 
-/* Feature divider */
-.feat-row + .feat-row {
-  border-top: 1px solid #e5e5e5;
-}
-
-/* Sticky buy bar */
+/* ── Sticky buy bar ── */
 .buy-bar {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  background: rgba(255,255,255,0.96);
+  bottom: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(255,255,255,0.97);
   backdrop-filter: blur(16px);
-  border-top: 1px solid #e5e5e5;
+  border-top: 1px solid var(--clr-border);
   padding-bottom: env(safe-area-inset-bottom, 0px);
   transform: translateY(0);
-  transition: transform 0.35s ease;
+  transition: transform 0.3s ease;
 }
-.buy-bar.hidden-bar {
-  transform: translateY(100%);
+.buy-bar.hidden {
+  transform: translateY(110%);
 }
 
-/* Scroll fade-in */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* ── Section utility ── */
+.sec { width: 100%; }
+.sec-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
 }
-.fade-up {
-  animation: fadeUp 0.6s ease forwards;
+.sec-inner-sm {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* ── Feature card hover ── */
+.feat-card {
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.feat-card:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+/* ── Spec row ── */
+.spec-row { border-bottom: 1px solid var(--clr-border); }
+.spec-row:last-child { border-bottom: none; }
+
+/* ── Fade-in on scroll ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: none;
 }

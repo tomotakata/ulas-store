@@ -1,11 +1,17 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { PRODUCT, RESERVATION_START, RESERVATION_DEADLINE } from "@/lib/constants";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Thumbs, FreeMode, Autoplay } from "swiper/modules";
+import type { Swiper as SwiperType } from "swiper";
+import { PRODUCT, RESERVATION_START, RESERVATION_DEADLINE, BANK_TRANSFER } from "@/lib/constants";
 import ReservationForm from "@/components/ui/ReservationForm";
 
-/* ─── Countdown ─── */
+/* ─────────────────────────────────────
+   Countdown hook
+───────────────────────────────────── */
 function useCountdown(target: Date) {
   const [t, setT] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, past: false });
   useEffect(() => {
@@ -30,96 +36,49 @@ function useCountdown(target: Date) {
 function Digit({ v, label }: { v: number; label: string }) {
   return (
     <div className="flex flex-col items-center gap-1">
-      <div className="w-14 h-14 bg-black text-white rounded-xl flex items-center justify-center text-2xl font-bold tabular-nums" style={{ fontFamily: "var(--font-en)" }}>
+      <div
+        className="w-12 h-12 md:w-14 md:h-14 bg-black text-white rounded-xl flex items-center justify-center text-xl md:text-2xl font-bold tabular-nums"
+        style={{ fontFamily: "var(--font-en)" }}
+      >
         {String(v).padStart(2, "0")}
       </div>
-      <span className="text-[10px] text-gray-400 tracking-widest uppercase">{label}</span>
+      <span className="text-[10px] text-gray-400 tracking-widest">{label}</span>
     </div>
   );
 }
 
-/* ─── Slider ─── */
+/* ─────────────────────────────────────
+   Product data
+───────────────────────────────────── */
 const SLIDES = [
-  { id: 1, label: "商品画像 1 — フロントビュー" },
-  { id: 2, label: "商品画像 2 — サイドビュー" },
-  { id: 3, label: "商品画像 3 — 使用イメージ" },
-  { id: 4, label: "商品画像 4 — 詳細" },
+  { src: "/images/product-1.png", alt: "ULAS O3 finger — フロントビュー" },
+  { src: "/images/product-2.png", alt: "ULAS O3 finger — サイドビュー" },
+  { src: "/images/product-3.png", alt: "ULAS O3 finger — 使用イメージ" },
+  { src: "/images/product-4.png", alt: "ULAS O3 finger — 詳細" },
+  { src: "/images/product-5.png", alt: "ULAS O3 finger — パッケージ" },
 ];
 
-function HeroSlider() {
-  const [cur, setCur] = useState(0);
-  const [drag, setDrag] = useState<number | null>(null);
-  const startX = useRef(0);
-
-  const next = useCallback(() => setCur(c => (c + 1) % SLIDES.length), []);
-  const prev = useCallback(() => setCur(c => (c - 1 + SLIDES.length) % SLIDES.length), []);
-
-  // Auto-play
-  useEffect(() => {
-    const id = setInterval(next, 4000);
-    return () => clearInterval(id);
-  }, [next]);
-
-  // Touch/mouse drag
-  const onPointerDown = (e: React.PointerEvent) => { startX.current = e.clientX; };
-  const onPointerUp = (e: React.PointerEvent) => {
-    const dx = e.clientX - startX.current;
-    if (dx < -40) next();
-    else if (dx > 40) prev();
-  };
-
-  return (
-    <div className="relative w-full overflow-hidden bg-gray-50 select-none" style={{ aspectRatio: "4/3" }}
-      onPointerDown={onPointerDown} onPointerUp={onPointerUp}>
-      {/* Track */}
-      <div className="flex h-full" style={{ transform: `translateX(-${cur * 100}%)`, transition: "transform 0.5s cubic-bezier(0.4,0,0.2,1)" }}>
-        {SLIDES.map((s) => (
-          <div key={s.id} className="w-full h-full flex-shrink-0 flex flex-col items-center justify-center gap-3 bg-gray-50">
-            <div className="text-7xl opacity-20">📷</div>
-            <p className="text-gray-300 text-xs font-medium tracking-wide">{s.label}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Arrows */}
-      <button onClick={prev} className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 backdrop-blur rounded-full shadow flex items-center justify-center hover:bg-white transition-colors z-10">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8L10 13" stroke="#111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-      </button>
-      <button onClick={next} className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 backdrop-blur rounded-full shadow flex items-center justify-center hover:bg-white transition-colors z-10">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="#111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-      </button>
-
-      {/* Dots */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-        {SLIDES.map((_, i) => (
-          <button key={i} onClick={() => setCur(i)}
-            className="rounded-full transition-all duration-300"
-            style={{ width: i === cur ? 20 : 6, height: 6, background: i === cur ? "#111" : "#ccc" }}
-          />
-        ))}
-      </div>
-
-      {/* Thumbnail strip */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-        {SLIDES.map((s, i) => (
-          <button key={s.id} onClick={() => setCur(i)}
-            className="w-12 h-9 rounded overflow-hidden border-2 transition-all duration-200 bg-gray-200"
-            style={{ borderColor: i === cur ? "#111" : "transparent" }}
-          >
-            <div className="w-full h-full bg-gray-300 flex items-center justify-center text-base opacity-40">📷</div>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ─── Data ─── */
 const FEATURES = [
-  { icon: "💧", title: "水からオゾン水を生成", desc: "水道水から直接オゾン水を生成。薬品・洗剤不要のクリーンな除菌・消臭を実現します。" },
-  { icon: "✋", title: "コンパクトなフィンガータイプ", desc: "手の指に装着するだけのコンパクト設計。キッチン・洗面所・どこでも手軽に使用できます。" },
-  { icon: "⚡", title: "USB充電式で繰り返し使える", desc: "USB充電対応。繰り返し使えてゴミが出ない、エコでコスパの高い設計です。" },
-  { icon: "🌿", title: "環境にやさしい", desc: "化学物質を使わないため環境負荷ゼロ。オゾンは水に戻るため安全で持続可能です。" },
+  {
+    icon: "💧",
+    title: "30秒でオゾン水を生成",
+    desc: "スイッチひとつで約30秒後に使用可能。水道水・市販水どちらにも対応。",
+  },
+  {
+    icon: "✋",
+    title: "フィンガータイプで使いやすい",
+    desc: "指に装着するだけのコンパクト設計。片手でスプレーできる直感的な操作感。",
+  },
+  {
+    icon: "🔋",
+    title: "USB充電式・繰り返し使える",
+    desc: "充電式だからランニングコストほぼゼロ。旅行・アウトドアにも携帯可能。",
+  },
+  {
+    icon: "🌿",
+    title: "洗剤・薬品不要",
+    desc: "化学物質を一切使わないため環境負荷ゼロ。オゾンは使用後に水へ戻ります。",
+  },
 ];
 
 const SPECS = [
@@ -133,15 +92,76 @@ const SPECS = [
   { label: "保証", value: "初期不良対応" },
 ];
 
-/* ─── Page ─── */
+const SCENES = [
+  { label: "キッチン", desc: "食材・まな板・シンクの除菌に" },
+  { label: "洗面所", desc: "洗面台・歯ブラシホルダーの清潔ケアに" },
+  { label: "オフィス", desc: "デスク・キーボード周りの除菌に" },
+  { label: "外出先", desc: "ショッピングカート・ドアノブ対策に" },
+  { label: "車内", desc: "ハンドル・シフトノブの除菌消臭に" },
+  { label: "育児", desc: "おもちゃ・哺乳瓶まわりのケアに" },
+];
+
+/* ─────────────────────────────────────
+   Use-scene image card
+───────────────────────────────────── */
+function SceneCard({ label, desc, index }: { label: string; desc: string; index: number }) {
+  const bg = ["#f0f4ff", "#f0fff4", "#fff7f0", "#fdf0ff", "#f0faff", "#fffbf0"][index % 6];
+  const em = ["🍽️", "🪥", "💻", "🛒", "🚗", "👶"][index % 6];
+  return (
+    <div className="feat-card rounded-2xl p-5 flex flex-col gap-3 border border-gray-100" style={{ background: bg }}>
+      <div className="text-3xl">{em}</div>
+      <div>
+        <p className="font-bold text-gray-900 text-sm">{label}</p>
+        <p className="text-gray-500 text-xs mt-1 leading-relaxed">{desc}</p>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────
+   Reveal hook
+───────────────────────────────────── */
+function useReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll(".reveal");
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("visible"); });
+    }, { threshold: 0.1 });
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
+}
+
+/* ─────────────────────────────────────
+   Section title component
+───────────────────────────────────── */
+function SecTitle({ en, ja, center }: { en: string; ja: string; center?: boolean }) {
+  return (
+    <div className={`mb-8 md:mb-12 ${center ? "text-center" : ""}`}>
+      <p className="text-xs font-semibold tracking-[0.2em] text-gray-400 uppercase mb-2" style={{ fontFamily: "var(--font-en)" }}>
+        {en}
+      </p>
+      <h2 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight leading-tight">
+        {ja}
+      </h2>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────
+   Main page
+───────────────────────────────────── */
 export default function HomePage() {
   const toStart    = useCountdown(RESERVATION_START);
   const toDeadline = useCountdown(RESERVATION_DEADLINE);
   const open       = toStart.past;
 
-  // Hide floating bar when reservation section is visible
+  const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
   const formRef  = useRef<HTMLElement>(null);
   const [showBar, setShowBar] = useState(true);
+
+  useReveal();
+
   useEffect(() => {
     const el = formRef.current;
     if (!el) return;
@@ -151,208 +171,256 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="overflow-x-hidden bg-white" style={{ fontFamily: "var(--font-body)" }}>
+    <div className="overflow-x-hidden" style={{ fontFamily: "var(--font-jp)", background: "#fff" }}>
 
-      {/* ══════════════════════════════════════════
-          HERO — image slider + buy box
-      ══════════════════════════════════════════ */}
-      <section className="w-full bg-white">
-        <div className="lp">
+      {/* ══════════════════════════════════════════════════════
+          § HERO — split layout: slider left / buy box right
+      ══════════════════════════════════════════════════════ */}
+      <section className="sec bg-white pt-6 pb-12 md:pt-10 md:pb-16">
+        <div className="sec-inner">
+          <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
 
-          {/* Product label */}
-          <div className="pt-6 pb-3">
-            <span className="text-xs font-semibold tracking-widest text-gray-400 uppercase">ULAS / O3 finger</span>
-          </div>
+            {/* — Left: Slider — */}
+            <div className="w-full lg:w-[55%] lg:sticky lg:top-24">
+              {/* Main swiper */}
+              <Swiper
+                modules={[Navigation, Pagination, Thumbs, Autoplay]}
+                thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
+                navigation
+                pagination={{ clickable: true }}
+                autoplay={{ delay: 4500, disableOnInteraction: true }}
+                loop
+                className="rounded-2xl overflow-hidden border border-gray-100"
+                style={{ aspectRatio: "1 / 1" }}
+              >
+                {SLIDES.map((s) => (
+                  <SwiperSlide key={s.src}>
+                    <div className="relative w-full h-full bg-gray-50 flex items-center justify-center" style={{ aspectRatio: "1/1" }}>
+                      <Image
+                        src={s.src}
+                        alt={s.alt}
+                        fill
+                        style={{ objectFit: "contain" }}
+                        sizes="(max-width: 1024px) 100vw, 55vw"
+                        priority={s.src === SLIDES[0].src}
+                      />
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
 
-          {/* Headline */}
-          <h1 className="text-[2rem] font-black leading-tight tracking-tight text-gray-900 mb-1" style={{ fontFamily: "var(--font-en)" }}>
-            ULAS <span className="text-black">O3 finger</span>
-          </h1>
-          <p className="text-gray-500 text-sm mb-5 leading-relaxed">
-            水からオゾン水を生成し、そのままスプレーできる<br className="hidden sm:block" />
-            コンパクト型オゾン水生成器
-          </p>
+              {/* Thumbs swiper */}
+              <Swiper
+                modules={[FreeMode, Thumbs]}
+                onSwiper={setThumbsSwiper}
+                watchSlidesProgress
+                freeMode
+                spaceBetween={8}
+                slidesPerView={5}
+                className="thumb-swiper mt-3"
+              >
+                {SLIDES.map((s) => (
+                  <SwiperSlide key={`t-${s.src}`}>
+                    <div className="relative bg-gray-50 rounded-lg overflow-hidden" style={{ aspectRatio: "1/1" }}>
+                      <Image src={s.src} alt={s.alt} fill style={{ objectFit: "contain" }} sizes="80px" />
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
 
-          {/* Slider */}
-          <div className="rounded-2xl overflow-hidden mb-5 shadow-sm border border-gray-100">
-            <HeroSlider />
-          </div>
-
-          {/* Badge + price block */}
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <div className="inline-flex items-center gap-1.5 bg-black text-white text-[11px] font-bold px-3 py-1 rounded-full mb-2">
+            {/* — Right: Buy box — */}
+            <div className="w-full lg:w-[45%]">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 bg-black text-white text-[11px] font-bold px-3 py-1.5 rounded-full mb-4">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
                 先行予約受付中
               </div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-black text-black" style={{ fontFamily: "var(--font-en)", letterSpacing: "-0.04em" }}>
-                  ¥18,700
-                </span>
-                <span className="text-gray-400 line-through text-sm">¥19,800</span>
+
+              {/* Title */}
+              <h1 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-1" style={{ fontFamily: "var(--font-en)" }}>
+                ULAS O3 finger
+              </h1>
+              <p className="text-gray-500 text-sm leading-relaxed mb-6">
+                水からオゾン水を生成し、そのままスプレーできる<br />
+                コンパクト型オゾン水生成器
+              </p>
+
+              {/* Price */}
+              <div className="mb-6">
+                <div className="flex items-center gap-3 mb-0.5">
+                  <span className="text-4xl font-black text-gray-900 tracking-tight" style={{ fontFamily: "var(--font-en)" }}>
+                    ¥18,700
+                  </span>
+                  <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">先行特価</span>
+                </div>
+                <p className="text-gray-400 text-sm">
+                  <span className="line-through mr-2">定価 ¥19,800</span>
+                  税込・送料込
+                </p>
               </div>
-              <p className="text-gray-400 text-xs mt-0.5">税込・送料込</p>
+
+              {/* Delivery */}
+              <div className="flex items-center gap-2 bg-gray-50 rounded-xl px-4 py-3 mb-6 border border-gray-100">
+                <span className="text-xl">📦</span>
+                <div>
+                  <p className="text-xs text-gray-400">お届け予定</p>
+                  <p className="text-sm font-semibold text-gray-900">{PRODUCT.deliveryDate}（先着順）</p>
+                </div>
+              </div>
+
+              {/* Countdown */}
+              <div className="bg-gray-50 rounded-2xl p-5 mb-6 border border-gray-100">
+                {!open ? (
+                  <>
+                    <p className="text-xs text-gray-400 text-center mb-4 tracking-wide">予約開始まで</p>
+                    <div className="flex items-center justify-center gap-3">
+                      <Digit v={toStart.days} label="日" />
+                      <span className="text-gray-300 text-lg font-light pb-5">:</span>
+                      <Digit v={toStart.hours} label="時間" />
+                      <span className="text-gray-300 text-lg font-light pb-5">:</span>
+                      <Digit v={toStart.minutes} label="分" />
+                      <span className="text-gray-300 text-lg font-light pb-5">:</span>
+                      <Digit v={toStart.seconds} label="秒" />
+                    </div>
+                    <p className="text-center text-xs text-gray-400 mt-4">{PRODUCT.reservationStart}より開始</p>
+                  </>
+                ) : !toDeadline.past ? (
+                  <>
+                    <p className="text-xs font-semibold text-center text-black mb-4 tracking-wide">受付中 — 締切まで</p>
+                    <div className="flex items-center justify-center gap-3">
+                      <Digit v={toDeadline.days} label="日" />
+                      <span className="text-gray-300 text-lg font-light pb-5">:</span>
+                      <Digit v={toDeadline.hours} label="時間" />
+                      <span className="text-gray-300 text-lg font-light pb-5">:</span>
+                      <Digit v={toDeadline.minutes} label="分" />
+                      <span className="text-gray-300 text-lg font-light pb-5">:</span>
+                      <Digit v={toDeadline.seconds} label="秒" />
+                    </div>
+                    <p className="text-center text-xs text-gray-400 mt-4">予約締切: {PRODUCT.reservationEnd}</p>
+                  </>
+                ) : (
+                  <p className="text-center text-red-500 font-bold text-sm">先行予約受付終了</p>
+                )}
+              </div>
+
+              {/* CTA */}
+              <Link href="#reservation"
+                className="block w-full text-center bg-black hover:bg-gray-900 active:scale-[0.99] text-white font-bold text-base py-4 rounded-xl transition-all mb-3">
+                今すぐ先行予約する →
+              </Link>
+              <p className="text-center text-xs text-gray-400">先着順発送 · 予約締切 7/31 · クレカ / 銀行振込</p>
+
+              {/* Trust badges */}
+              <div className="grid grid-cols-3 gap-3 mt-6">
+                {[
+                  { icon: "🔒", label: "Stripe決済" },
+                  { icon: "📦", label: "送料込" },
+                  { icon: "🔄", label: "初期不良対応" },
+                ].map((b) => (
+                  <div key={b.label} className="flex flex-col items-center gap-1 bg-gray-50 rounded-xl py-3 border border-gray-100">
+                    <span className="text-xl">{b.icon}</span>
+                    <span className="text-[10px] text-gray-500 font-medium">{b.label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="flex flex-col items-end gap-1.5">
-              <span className="text-xs bg-red-500 text-white font-bold px-2 py-0.5 rounded">先行特価</span>
-              <span className="text-xs text-gray-400">お届け {PRODUCT.deliveryDate}</span>
-            </div>
-          </div>
-
-          {/* Countdown */}
-          <div className="rounded-xl bg-gray-50 border border-gray-100 p-4 mb-4">
-            {!open ? (
-              <>
-                <p className="text-xs text-gray-400 text-center mb-3 tracking-wide">予約開始まで</p>
-                <div className="flex items-center justify-center gap-3">
-                  <Digit v={toStart.days} label="日" />
-                  <span className="text-gray-300 text-xl font-light mb-5">:</span>
-                  <Digit v={toStart.hours} label="時間" />
-                  <span className="text-gray-300 text-xl font-light mb-5">:</span>
-                  <Digit v={toStart.minutes} label="分" />
-                  <span className="text-gray-300 text-xl font-light mb-5">:</span>
-                  <Digit v={toStart.seconds} label="秒" />
-                </div>
-                <p className="text-center text-xs text-gray-400 mt-3">{PRODUCT.reservationStart}より開始予定</p>
-              </>
-            ) : !toDeadline.past ? (
-              <>
-                <p className="text-xs text-center font-semibold text-black mb-3 tracking-wide">予約受付中 — 締切まで</p>
-                <div className="flex items-center justify-center gap-3">
-                  <Digit v={toDeadline.days} label="日" />
-                  <span className="text-gray-300 text-xl font-light mb-5">:</span>
-                  <Digit v={toDeadline.hours} label="時間" />
-                  <span className="text-gray-300 text-xl font-light mb-5">:</span>
-                  <Digit v={toDeadline.minutes} label="分" />
-                  <span className="text-gray-300 text-xl font-light mb-5">:</span>
-                  <Digit v={toDeadline.seconds} label="秒" />
-                </div>
-              </>
-            ) : (
-              <p className="text-center text-red-500 text-sm font-bold">先行予約受付終了</p>
-            )}
-          </div>
-
-          {/* CTA */}
-          <Link href="#reservation"
-            className="block w-full text-center bg-black hover:bg-gray-900 active:bg-gray-800 text-white font-bold text-base py-4 rounded-xl transition-colors mb-2">
-            今すぐ先行予約する →
-          </Link>
-          <p className="text-center text-xs text-gray-400 mb-8">先着順発送 · 予約締切 7/31</p>
-
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════
-          CATCH COPY — full-bleed black band
-      ══════════════════════════════════════════ */}
-      <section className="w-full bg-black py-16">
-        <div className="lp text-center">
-          <p className="text-white font-black leading-tight text-3xl tracking-tight">
-            30秒でオゾン水を生成。
-          </p>
-          <p className="text-white font-black leading-tight text-3xl tracking-tight mt-2">
-            指先から、清潔をスプレー。
-          </p>
-          <div className="w-10 h-0.5 bg-white/30 mx-auto mt-8 mb-6" />
-          <p className="text-white/60 text-sm leading-relaxed">
-            新感覚の除菌・消臭体験を、あなたの日常の手元に。
-          </p>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════
-          ABOUT — white
-      ══════════════════════════════════════════ */}
-      <section className="w-full bg-white py-16">
-        <div className="lp">
-          <div className="flex items-center gap-2 mb-6">
-            <div className="w-5 h-0.5 bg-black" />
-            <h2 className="sec-title">ULAS O3 fingerとは</h2>
-          </div>
-          <div className="space-y-4 text-gray-600 text-[15px] leading-8">
-            <p>
-              <strong className="text-black">ULAS O3 finger</strong> は、水道水から直接オゾン水を生成し、そのままスプレーできる全く新しいコンパクト型デバイスです。
-            </p>
-            <p>
-              オゾン水は除菌・消臭に高い効果を発揮しながら、使用後は水に戻るため環境への負荷がほぼゼロ。洗剤や薬品を使わないクリーンな生活をサポートします。
-            </p>
-            <p>
-              指にはめるだけのコンパクト設計で、キッチン・洗面所・外出先など、あらゆるシーンで手軽に除菌できます。USB充電式で繰り返し使えます。
-            </p>
-          </div>
-          <div className="mt-8 p-4 rounded-lg bg-gray-50 border border-gray-100 text-xs text-gray-400 leading-relaxed">
-            ※本製品は医療機器ではありません。効果の程度は使用環境・方法により異なります。飲料水への使用は想定しておりません。
           </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          FEATURES — light gray
-      ══════════════════════════════════════════ */}
-      <section className="w-full bg-gray-50 py-16">
-        <div className="lp">
-          <div className="flex items-center gap-2 mb-10">
-            <div className="w-5 h-0.5 bg-black" />
-            <h2 className="sec-title">製品の特徴</h2>
+      {/* ══════════════════════════════════════════════════════
+          § CATCH — full-bleed black
+      ══════════════════════════════════════════════════════ */}
+      <section className="sec bg-black py-20 md:py-28">
+        <div className="sec-inner-sm text-center reveal">
+          <p className="text-white/40 text-xs tracking-[0.25em] uppercase mb-6" style={{ fontFamily: "var(--font-en)" }}>
+            The New Standard of Clean
+          </p>
+          <h2 className="text-white font-black text-3xl md:text-5xl leading-tight tracking-tight mb-6">
+            30秒でオゾン水を生成。<br />指先から、清潔をスプレー。
+          </h2>
+          <p className="text-white/50 text-sm md:text-base leading-relaxed max-w-md mx-auto">
+            洗剤・薬品不要。水から生まれたオゾン水で、あらゆる場所をクリーンに。
+          </p>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════
+          § FEATURES — white
+      ══════════════════════════════════════════════════════ */}
+      <section className="sec bg-white py-20 md:py-28">
+        <div className="sec-inner">
+          <div className="reveal">
+            <SecTitle en="Features" ja="ULAS O3 fingerの特徴" center />
           </div>
-          <div>
-            {FEATURES.map((f, i) => (
-              <div key={f.title} className="feat-row flex gap-5 py-7">
-                <div className="flex-shrink-0 w-12 h-12 bg-black rounded-2xl flex items-center justify-center text-2xl">
-                  {f.icon}
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-gray-900 text-sm mb-1.5 tracking-tight">{f.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
-                </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 reveal">
+            {FEATURES.map((f) => (
+              <div key={f.title} className="feat-card rounded-2xl border border-gray-100 p-6 bg-white">
+                <div className="text-4xl mb-4">{f.icon}</div>
+                <h3 className="font-bold text-gray-900 text-sm mb-2 leading-snug">{f.title}</h3>
+                <p className="text-gray-500 text-xs leading-relaxed">{f.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          HOW TO USE — white
-      ══════════════════════════════════════════ */}
-      <section className="w-full bg-white py-16">
-        <div className="lp">
-          <div className="flex items-center gap-2 mb-10">
-            <div className="w-5 h-0.5 bg-black" />
-            <h2 className="sec-title">使い方</h2>
+      {/* ══════════════════════════════════════════════════════
+          § HOW TO USE — gray
+      ══════════════════════════════════════════════════════ */}
+      <section className="sec py-20 md:py-28" style={{ background: "#f7f7f7" }}>
+        <div className="sec-inner-sm">
+          <div className="reveal">
+            <SecTitle en="How to Use" ja="使い方はシンプル3ステップ" center />
           </div>
-          {[
-            { n: "01", title: "水を入れる", desc: "水道水または市販の水を本体タンクに入れます。" },
-            { n: "02", title: "スイッチを押す", desc: "ボタンひとつで電気分解が始まり、約30秒でオゾン水が生成されます。" },
-            { n: "03", title: "スプレーする", desc: "生成されたオゾン水をそのまま手やキッチン、洗面所などにスプレー。" },
-          ].map((s, i) => (
-            <div key={s.n} className="flex gap-6 items-start pb-10 last:pb-0" style={{ borderBottom: i < 2 ? "1px solid #e5e5e5" : "none", marginBottom: i < 2 ? "1.5rem" : 0 }}>
-              <div className="flex-shrink-0 text-5xl font-black text-gray-100 leading-none select-none" style={{ fontFamily: "var(--font-en)" }}>
-                {s.n}
-              </div>
-              <div className="pt-1">
-                <h3 className="font-bold text-gray-900 text-base mb-1.5">{s.title}</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 reveal">
+            {[
+              { n: "01", title: "水を入れる", desc: "水道水または市販の水を本体タンクに入れます。" },
+              { n: "02", title: "スイッチを押す", desc: "ボタンを押すと電気分解が始まり、約30秒でオゾン水が生成されます。" },
+              { n: "03", title: "スプレーする", desc: "生成されたオゾン水を手・キッチン・洗面所などに直接スプレー。" },
+            ].map((s, i) => (
+              <div key={s.n} className="text-center">
+                <div className="text-6xl font-black text-gray-100 mb-3 leading-none" style={{ fontFamily: "var(--font-en)" }}>
+                  {s.n}
+                </div>
+                {i < 2 && (
+                  <div className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 text-gray-200 text-2xl">→</div>
+                )}
+                <h3 className="font-bold text-gray-900 text-base mb-2">{s.title}</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">{s.desc}</p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          SPEC TABLE — gray
-      ══════════════════════════════════════════ */}
-      <section className="w-full bg-gray-50 py-16">
-        <div className="lp">
-          <div className="flex items-center gap-2 mb-8">
-            <div className="w-5 h-0.5 bg-black" />
-            <h2 className="sec-title">製品仕様</h2>
+      {/* ══════════════════════════════════════════════════════
+          § SCENES — white
+      ══════════════════════════════════════════════════════ */}
+      <section className="sec bg-white py-20 md:py-28">
+        <div className="sec-inner">
+          <div className="reveal">
+            <SecTitle en="Use Cases" ja="あらゆる場面で活躍" center />
           </div>
-          <div className="rounded-xl overflow-hidden border border-gray-200 bg-white">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 reveal">
+            {SCENES.map((sc, i) => <SceneCard key={sc.label} {...sc} index={i} />)}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════
+          § SPEC TABLE — gray
+      ══════════════════════════════════════════════════════ */}
+      <section className="sec py-20 md:py-28" style={{ background: "#f7f7f7" }}>
+        <div className="sec-inner-sm">
+          <div className="reveal">
+            <SecTitle en="Specifications" ja="製品仕様" />
+          </div>
+          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden reveal">
             {SPECS.map((s, i) => (
-              <div key={s.label} className="flex items-baseline gap-4 px-5 py-4"
-                style={{ borderBottom: i < SPECS.length - 1 ? "1px solid #f0f0f0" : "none" }}>
-                <span className="text-gray-400 text-xs w-24 shrink-0 pt-0.5">{s.label}</span>
+              <div key={s.label} className="spec-row flex items-start gap-4 px-6 py-4">
+                <span className="text-gray-400 text-xs w-28 shrink-0 pt-0.5 font-medium">{s.label}</span>
                 <span className="text-gray-900 text-sm font-semibold leading-relaxed">{s.value}</span>
               </div>
             ))}
@@ -360,25 +428,36 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          3 REASONS — black
-      ══════════════════════════════════════════ */}
-      <section className="w-full bg-black py-16">
-        <div className="lp">
-          <div className="flex items-center gap-2 mb-10">
-            <div className="w-5 h-0.5 bg-white" />
-            <h2 className="text-white text-2xl font-black tracking-tight">今すぐ予約する理由</h2>
+      {/* ══════════════════════════════════════════════════════
+          § REASONS — black
+      ══════════════════════════════════════════════════════ */}
+      <section className="sec bg-black py-20 md:py-28">
+        <div className="sec-inner-sm">
+          <div className="reveal">
+            <SecTitle en="Why Pre-order" ja="今すぐ予約する3つの理由" />
           </div>
-          <div className="space-y-4">
+          <div className="space-y-4 reveal">
             {[
-              { n: "01", title: "先行予約特別価格", body: "定価¥19,800のところ、先行予約価格¥18,700でご購入いただけます。一般販売開始後は定価に戻ります。" },
-              { n: "02", title: "先着順発送", body: "予約順に発送します。早くご予約いただくほど、お手元に早く届きます。" },
-              { n: "03", title: "予約期間限定〜7/31", body: "先行予約は7月31日まで。期間終了後は予約受付を終了し、一般販売（定価）に切り替わります。" },
+              {
+                n: "01",
+                title: "先行予約特別価格",
+                body: "定価¥19,800のところ、先行予約価格¥18,700（税込・送料込）でご購入いただけます。一般販売開始後は定価に戻ります。",
+              },
+              {
+                n: "02",
+                title: "先着順発送",
+                body: "予約順に発送します。早くご予約いただくほど、お手元に早く届きます。",
+              },
+              {
+                n: "03",
+                title: "予約期間限定〜7/31",
+                body: "先行予約は2026年7月31日まで。期間終了後は予約受付を終了し、一般販売（定価）に切り替わります。",
+              },
             ].map((r) => (
-              <div key={r.n} className="flex gap-5 p-5 rounded-xl border border-white/10 bg-white/5">
-                <span className="text-white/20 font-black text-3xl shrink-0 leading-none" style={{ fontFamily: "var(--font-en)" }}>{r.n}</span>
+              <div key={r.n} className="flex gap-5 p-6 rounded-2xl border border-white/10 bg-white/5">
+                <span className="text-white/15 font-black text-4xl shrink-0 leading-none" style={{ fontFamily: "var(--font-en)" }}>{r.n}</span>
                 <div>
-                  <h3 className="text-white font-bold text-sm mb-1.5">{r.title}</h3>
+                  <h3 className="text-white font-bold text-sm mb-2">{r.title}</h3>
                   <p className="text-white/50 text-sm leading-relaxed">{r.body}</p>
                 </div>
               </div>
@@ -387,75 +466,91 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          RESERVATION FORM — white
-      ══════════════════════════════════════════ */}
-      <section id="reservation" ref={formRef} className="w-full bg-white py-16">
-        <div className="lp">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-5 h-0.5 bg-black" />
-            <h2 className="sec-title">先行予約フォーム</h2>
+      {/* ══════════════════════════════════════════════════════
+          § RESERVATION FORM — white
+      ══════════════════════════════════════════════════════ */}
+      <section id="reservation" ref={formRef} className="sec bg-white py-20 md:py-28">
+        <div className="sec-inner-sm">
+          <div className="reveal">
+            <SecTitle en="Pre-order" ja="先行予約フォーム" />
           </div>
-          <p className="text-gray-400 text-sm mb-8">必要事項をご入力のうえ、予約を確定してください。</p>
 
-          {/* Price summary */}
-          <div className="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-xl px-5 py-4 mb-6">
+          {/* Price + delivery summary */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-50 border border-gray-100 rounded-2xl px-6 py-5 mb-8 reveal">
             <div>
-              <p className="text-xs text-gray-400 mb-0.5">先行予約価格</p>
-              <p className="text-2xl font-black text-black" style={{ fontFamily: "var(--font-en)", letterSpacing: "-0.04em" }}>¥18,700</p>
-              <p className="text-xs text-gray-400">税込・送料込</p>
+              <p className="text-xs text-gray-400 mb-0.5">先行予約特別価格</p>
+              <p className="text-3xl font-black text-black tracking-tight" style={{ fontFamily: "var(--font-en)" }}>¥18,700</p>
+              <p className="text-xs text-gray-400 mt-0.5">税込・送料込</p>
             </div>
-            <div className="text-right text-xs text-gray-400">
-              <p>お届け予定</p>
-              <p className="font-semibold text-gray-700 mt-0.5">{PRODUCT.deliveryDate}</p>
+            <div className="h-10 w-px bg-gray-200 hidden sm:block" />
+            <div className="text-center sm:text-right">
+              <p className="text-xs text-gray-400 mb-0.5">お届け予定</p>
+              <p className="font-semibold text-gray-900 text-sm">{PRODUCT.deliveryDate}</p>
+              <p className="text-xs text-gray-400 mt-0.5">先着順に発送</p>
+            </div>
+            <div className="h-10 w-px bg-gray-200 hidden sm:block" />
+            <div className="text-center sm:text-right">
+              <p className="text-xs text-gray-400 mb-0.5">お支払い方法</p>
+              <p className="font-semibold text-gray-900 text-sm">クレカ / 銀行振込</p>
+              <p className="text-xs text-gray-400 mt-0.5">Stripe 決済対応</p>
             </div>
           </div>
 
-          <ReservationForm />
+          <div className="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-sm reveal">
+            <ReservationForm />
+          </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          CAUTIONS — gray
-      ══════════════════════════════════════════ */}
-      <section className="w-full bg-gray-50 py-14">
-        <div className="lp">
-          <h2 className="font-bold text-gray-900 text-base mb-5 tracking-tight">ご注意事項</h2>
-          <ul className="space-y-4">
+      {/* ══════════════════════════════════════════════════════
+          § CAUTIONS + TOKUSHOHO — gray
+      ══════════════════════════════════════════════════════ */}
+      <section className="sec py-16 md:py-20" style={{ background: "#f7f7f7" }}>
+        <div className="sec-inner-sm">
+          <h3 className="font-bold text-gray-900 text-base mb-5">ご注意事項</h3>
+          <ul className="space-y-4 mb-10">
             {[
               `本商品は先行予約商品です。お届けは${PRODUCT.deliveryDate}を予定しています（変更の場合はメールにてご連絡します）。`,
-              "銀行振込をお選びの場合、ご注文日より3営業日以内にお振込ください。期限内にご入金が確認できない場合はキャンセルとなる場合があります。",
+              `銀行振込をお選びの場合、${BANK_TRANSFER.deadline}にお振込ください。期限内にご入金が確認できない場合はキャンセルとなる場合があります。`,
               "お客様都合による返品・交換はお受けできません。商品に瑕疵がある場合のみ対応いたします。",
               "ご予約内容の変更・キャンセルはsupport@ulas.jpまでご連絡ください。",
               "初めてご予約のお客様には、マイページのログイン情報（パスワード）をメールにてお送りします。",
             ].map((text, i) => (
               <li key={i} className="flex gap-3 text-sm text-gray-500 leading-relaxed">
-                <span className="shrink-0 w-1 h-1 rounded-full bg-gray-400 mt-2.5" />
+                <span className="shrink-0 mt-2 w-1 h-1 rounded-full bg-gray-400" />
                 {text}
               </li>
             ))}
           </ul>
-          <div className="mt-10 pt-8 border-t border-gray-200 text-center">
-            <Link href="/tokushoho" className="text-sm text-gray-400 hover:text-gray-700 underline underline-offset-2 transition-colors">
-              特定商取引法に基づく表示 →
+          <div className="border-t border-gray-200 pt-8 text-center">
+            <Link href="/tokushoho" className="text-sm text-gray-400 hover:text-gray-700 underline underline-offset-4 transition-colors">
+              特定商取引法に基づく表示を確認する →
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          FLOATING BUY BAR
-      ══════════════════════════════════════════ */}
-      <div className={`buy-bar${showBar ? "" : " hidden-bar"}`}>
-        <div className="lp py-3">
-          <div className="flex items-center gap-3">
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-gray-400 truncate">ULAS O3 finger — 先行予約</p>
-              <p className="font-black text-base text-black leading-tight" style={{ fontFamily: "var(--font-en)" }}>¥18,700 <span className="text-gray-400 text-xs font-normal">税込</span></p>
+      {/* ══════════════════════════════════════════════════════
+          § FLOATING BUY BAR
+      ══════════════════════════════════════════════════════ */}
+      <div className={`buy-bar${showBar ? "" : " hidden"}`}>
+        <div className="sec-inner py-3">
+          <div className="flex items-center gap-4 max-w-xl mx-auto lg:max-w-none">
+            <div className="hidden sm:flex items-center gap-3 shrink-0">
+              <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-gray-100 border border-gray-200 shrink-0">
+                <Image src="/images/product-1.png" alt="ULAS O3 finger" fill style={{ objectFit: "contain" }} sizes="40px" />
+              </div>
+              <div>
+                <p className="text-xs text-gray-400 leading-none">ULAS O3 finger</p>
+                <p className="font-black text-sm text-black leading-tight" style={{ fontFamily: "var(--font-en)" }}>¥18,700</p>
+              </div>
+            </div>
+            <div className="flex-1 block sm:hidden">
+              <p className="font-black text-base text-black" style={{ fontFamily: "var(--font-en)" }}>¥18,700 <span className="text-gray-400 text-xs font-normal">税込</span></p>
             </div>
             <Link href="#reservation"
-              className="shrink-0 bg-black hover:bg-gray-900 text-white font-bold text-sm px-6 py-3 rounded-xl transition-colors whitespace-nowrap">
-              今すぐ予約する
+              className="ml-auto shrink-0 bg-black hover:bg-gray-900 text-white font-bold text-sm px-8 py-3.5 rounded-xl transition-colors whitespace-nowrap">
+              今すぐ先行予約する →
             </Link>
           </div>
         </div>
