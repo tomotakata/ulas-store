@@ -194,7 +194,7 @@ export default function ReservationForm() {
               onChange={() => setForm((prev) => ({ ...prev, paymentMethod: "CARD" }))}
               className="sr-only"
             />
-            <span className="text-xl">💳</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
             <span className="font-medium text-sm">クレジットカード</span>
           </label>
           <label
@@ -212,7 +212,7 @@ export default function ReservationForm() {
               onChange={() => setForm((prev) => ({ ...prev, paymentMethod: "BANK_TRANSFER" }))}
               className="sr-only"
             />
-            <span className="text-xl">🏦</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 10v11M12 10v11M16 10v11"/></svg>
             <span className="font-medium text-sm">銀行振込</span>
           </label>
         </div>
