@@ -205,10 +205,11 @@ export default function HomePage() {
 
             {/* — Slider — */}
             <div className="w-full lg:w-[55%] lg:sticky lg:top-20">
+              <div className="relative">
               <Swiper
                 modules={[Navigation, Pagination, Thumbs, Autoplay]}
                 thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
-                navigation
+                navigation={{ prevEl: ".hero-prev", nextEl: ".hero-next" }}
                 pagination={{ clickable: true }}
                 autoplay={{ delay: 4500, disableOnInteraction: true }}
                 loop
@@ -224,6 +225,14 @@ export default function HomePage() {
                   </SwiperSlide>
                 ))}
               </Swiper>
+              {/* Custom nav buttons */}
+              <button className="hero-prev absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-gray-200 shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <button className="hero-next absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-gray-200 shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+              </div>
               <Swiper
                 modules={[FreeMode, Thumbs]}
                 onSwiper={setThumbsSwiper}
