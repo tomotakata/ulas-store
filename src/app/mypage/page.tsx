@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { BANK_TRANSFER } from "@/lib/constants";
+import { Suspense } from "react";
 
 interface User {
   id: string;
@@ -49,30 +50,65 @@ function ReservationStatusBadge({ status }: { status: string }) {
   );
 }
 
+// マジックリンク送信フォーム
 function LoginForm({ onLogin }: { onLogin: (user: User) => void }) {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
+
+  // URLにtokenがあれば自動的に検証
+  useEffect(() => {
+    const token = searchParams.get("token");
+    if (!token) return;
+
+    fetch("/api/auth/magic-verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.user) {
+          onLogin(data.user);
+        } else {
+          setError(data.error || "リンクが無効です。再度お試しください。");
+        }
+      })
+      .catch(() => setError("通信エラーが発生しました"));
+  }, [searchParams, onLogin]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch("/api/auth/magic-link", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email }),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.error || "ログインに失敗しました"); return; }
-      onLogin(data.user);
+      if (!res.ok) { setError(data.error || "送信に失敗しました"); return; }
+      setSent(true);
     } catch {
       setError("通信エラーが発生しました");
     } finally {
       setLoading(false);
     }
+  }
+
+  // tokenが存在する場合はローディング表示
+  if (searchParams.get("token") && !error) {
+    return (
+      <div className="min-h-screen bg-[#fafafa] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-gray-200 border-t-gray-900 rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-sm text-gray-500">ログイン中...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -85,58 +121,76 @@ function LoginForm({ onLogin }: { onLogin: (user: User) => void }) {
 
       <div className="flex-1 flex items-center justify-center px-4 py-16">
         <div className="w-full max-w-sm">
-          <div className="text-center mb-8">
-            <div className="w-10 h-10 rounded-full bg-gray-900 mx-auto mb-4 flex items-center justify-center">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-              </svg>
+          {sent ? (
+            // 送信完了画面
+            <div className="text-center">
+              <div className="w-14 h-14 rounded-full bg-green-50 border border-green-200 mx-auto mb-5 flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+                </svg>
+              </div>
+              <h1 className="text-xl font-bold text-gray-900 mb-2">メールを送信しました</h1>
+              <p className="text-sm text-gray-500 mb-1">
+                <span className="font-semibold text-gray-700">{email}</span> に
+              </p>
+              <p className="text-sm text-gray-500 mb-6">ログインリンクを送信しました。<br />メールに記載のリンクをクリックしてください。</p>
+              <p className="text-xs text-gray-400">リンクの有効期限は15分です。<br />届かない場合は迷惑メールフォルダをご確認ください。</p>
+              <button
+                onClick={() => { setSent(false); setEmail(""); }}
+                className="mt-6 text-xs text-gray-400 underline underline-offset-2 hover:text-gray-600 transition-colors"
+              >
+                別のアドレスで試す
+              </button>
             </div>
-            <h1 className="text-xl font-bold text-gray-900">マイページ</h1>
-            <p className="text-sm text-gray-500 mt-1">ご予約時のメールアドレスでログイン</p>
-          </div>
+          ) : (
+            // メール入力フォーム
+            <>
+              <div className="text-center mb-8">
+                <div className="w-10 h-10 rounded-full bg-gray-900 mx-auto mb-4 flex items-center justify-center">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                </div>
+                <h1 className="text-xl font-bold text-gray-900">マイページ</h1>
+                <p className="text-sm text-gray-500 mt-1">メールアドレスを入力するとログインリンクを送信します</p>
+              </div>
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm mb-5">
-              {error}
-            </div>
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm mb-5">
+                  {error}
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1.5 uppercase tracking-wide">メールアドレス</label>
+                  <input
+                    type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition"
+                    placeholder="ご購入時のメールアドレス"
+                  />
+                </div>
+                <button
+                  type="submit" disabled={loading}
+                  className="w-full bg-gray-900 hover:bg-gray-800 disabled:opacity-50 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
+                >
+                  {loading ? "送信中..." : "ログインリンクを送信"}
+                </button>
+              </form>
+
+              <p className="text-center text-xs text-gray-400 mt-6">
+                まだご予約されていませんか?{" "}
+                <Link href="/#reservation" className="text-gray-900 underline underline-offset-2">先行予約はこちら</Link>
+              </p>
+            </>
           )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5 uppercase tracking-wide">メールアドレス</label>
-              <input
-                type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition"
-                placeholder="example@email.com"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5 uppercase tracking-wide">パスワード</label>
-              <input
-                type="password" value={password} onChange={(e) => setPassword(e.target.value)} required
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition"
-                placeholder="••••••••"
-              />
-            </div>
-            <button
-              type="submit" disabled={loading}
-              className="w-full bg-gray-900 hover:bg-gray-800 disabled:opacity-50 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm mt-2"
-            >
-              {loading ? "ログイン中..." : "ログイン"}
-            </button>
-          </form>
-
-          <p className="text-center text-xs text-gray-400 mt-6">
-            まだご予約されていませんか?{" "}
-            <Link href="/#reservation" className="text-gray-900 underline underline-offset-2">先行予約はこちら</Link>
-          </p>
         </div>
       </div>
     </div>
   );
 }
 
-export default function MyPage() {
+function MyPageContent() {
   const [user, setUser] = useState<User | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -177,12 +231,11 @@ export default function MyPage() {
   }
 
   if (!user) {
-    return <LoginForm onLogin={(u) => { setUser(u); setLoading(true); window.location.reload(); }} />;
+    return <LoginForm onLogin={(u) => { setUser(u); setLoading(true); window.location.replace("/mypage"); }} />;
   }
 
   return (
     <div className="min-h-screen bg-[#fafafa]">
-      {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
           <Link href="/" className="text-sm font-semibold tracking-widest text-gray-900 uppercase">ULAS</Link>
@@ -199,13 +252,11 @@ export default function MyPage() {
       </header>
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-10 space-y-8">
-        {/* Page title */}
         <div>
           <h1 className="text-2xl font-bold text-gray-900">マイページ</h1>
           <p className="text-sm text-gray-500 mt-1">{user.email}</p>
         </div>
 
-        {/* Account card */}
         <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100">
             <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">アカウント情報</h2>
@@ -222,7 +273,6 @@ export default function MyPage() {
           </div>
         </section>
 
-        {/* Reservations */}
         <section>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">ご予約一覧</h2>
@@ -237,10 +287,7 @@ export default function MyPage() {
                 </svg>
               </div>
               <p className="text-sm text-gray-500 mb-5">ご予約はまだありません</p>
-              <Link
-                href="/#reservation"
-                className="inline-block bg-gray-900 hover:bg-gray-800 text-white text-sm font-semibold py-2.5 px-6 rounded-xl transition-colors"
-              >
+              <Link href="/#reservation" className="inline-block bg-gray-900 hover:bg-gray-800 text-white text-sm font-semibold py-2.5 px-6 rounded-xl transition-colors">
                 先行予約する
               </Link>
             </div>
@@ -250,7 +297,6 @@ export default function MyPage() {
                 const ps = PAYMENT_STATUS[r.paymentStatus] ?? { label: r.paymentStatus, color: "text-gray-600" };
                 return (
                   <div key={r.id} className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                    {/* Card header */}
                     <div className="px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                       <div>
                         <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">予約番号</p>
@@ -262,7 +308,6 @@ export default function MyPage() {
                       </div>
                     </div>
 
-                    {/* Card body */}
                     <div className="px-6 py-5 grid grid-cols-2 sm:grid-cols-4 gap-5 text-sm">
                       <div>
                         <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">商品</p>
@@ -286,7 +331,6 @@ export default function MyPage() {
                       </div>
                     </div>
 
-                    {/* Shipping */}
                     {r.shippingAddress && (
                       <div className="px-6 py-3 bg-gray-50 border-t border-gray-100 flex items-start gap-2 text-xs text-gray-500">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0">
@@ -296,42 +340,21 @@ export default function MyPage() {
                       </div>
                     )}
 
-                    {/* Bank transfer notice */}
                     {r.paymentMethod === "BANK_TRANSFER" && r.paymentStatus === "PENDING" && (
                       <div className="px-6 py-5 bg-amber-50 border-t border-amber-100">
                         <p className="text-xs font-bold text-amber-700 mb-3">お振込みをお待ちしております</p>
                         <div className="bg-white border border-amber-200 rounded-xl p-4 mb-3">
                           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">振込先口座</p>
                           <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-3 gap-x-4 text-sm">
-                            <div>
-                              <p className="text-xs text-gray-400 mb-0.5">銀行名</p>
-                              <p className="font-semibold text-gray-900">{BANK_TRANSFER.bankName}</p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-gray-400 mb-0.5">支店名</p>
-                              <p className="font-semibold text-gray-900">{BANK_TRANSFER.branchName}</p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-gray-400 mb-0.5">口座種別</p>
-                              <p className="font-semibold text-gray-900">{BANK_TRANSFER.accountType}</p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-gray-400 mb-0.5">口座番号</p>
-                              <p className="font-bold text-gray-900 text-base tracking-wider">{BANK_TRANSFER.accountNumber}</p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-gray-400 mb-0.5">口座名義</p>
-                              <p className="font-semibold text-gray-900">{BANK_TRANSFER.accountName}</p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-gray-400 mb-0.5">振込金額</p>
-                              <p className="font-bold text-gray-900">¥{r.totalAmount.toLocaleString()}</p>
-                            </div>
+                            <div><p className="text-xs text-gray-400 mb-0.5">銀行名</p><p className="font-semibold text-gray-900">{BANK_TRANSFER.bankName}</p></div>
+                            <div><p className="text-xs text-gray-400 mb-0.5">支店名</p><p className="font-semibold text-gray-900">{BANK_TRANSFER.branchName}</p></div>
+                            <div><p className="text-xs text-gray-400 mb-0.5">口座種別</p><p className="font-semibold text-gray-900">{BANK_TRANSFER.accountType}</p></div>
+                            <div><p className="text-xs text-gray-400 mb-0.5">口座番号</p><p className="font-bold text-gray-900 text-base tracking-wider">{BANK_TRANSFER.accountNumber}</p></div>
+                            <div><p className="text-xs text-gray-400 mb-0.5">口座名義</p><p className="font-semibold text-gray-900">{BANK_TRANSFER.accountName}</p></div>
+                            <div><p className="text-xs text-gray-400 mb-0.5">振込金額</p><p className="font-bold text-gray-900">¥{r.totalAmount.toLocaleString()}</p></div>
                           </div>
                         </div>
-                        <p className="text-xs text-amber-700">
-                          振込期限: <span className="font-semibold">{BANK_TRANSFER.deadline}</span>。確認後、予約確定のご連絡をいたします。
-                        </p>
+                        <p className="text-xs text-amber-700">振込期限: <span className="font-semibold">{BANK_TRANSFER.deadline}</span>。確認後、予約確定のご連絡をいたします。</p>
                       </div>
                     )}
                   </div>
@@ -341,17 +364,26 @@ export default function MyPage() {
           )}
         </section>
 
-        {/* Support */}
         <div className="text-center pb-8">
           <p className="text-xs text-gray-400">
             ご不明な点は{" "}
-            <a href="mailto:support@ulas.jp" className="underline underline-offset-2 hover:text-gray-700 transition-colors">
-              support@ulas.jp
-            </a>
+            <a href="mailto:support@ulas.jp" className="underline underline-offset-2 hover:text-gray-700 transition-colors">support@ulas.jp</a>
             {" "}までお問い合わせください
           </p>
         </div>
       </main>
     </div>
+  );
+}
+
+export default function MyPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#fafafa] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-gray-200 border-t-gray-900 rounded-full animate-spin" />
+      </div>
+    }>
+      <MyPageContent />
+    </Suspense>
   );
 }

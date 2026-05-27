@@ -7,10 +7,19 @@ datasource db {
   provider = "postgresql"
 }
 
+model MagicLink {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+}
+
 model User {
   id            String    @id @default(cuid())
   email         String    @unique
-  password      String
+  password      String    @default("")
   name          String?
   phone         String?
   isAdmin       Boolean   @default(false)
