@@ -1,8 +1,24 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import {
+  CreditCard,
+  Truck,
+  HeadphonesIcon,
+  Droplets,
+  Hand,
+  BatteryCharging,
+  Leaf,
+  Package,
+  UtensilsCrossed,
+  SprayCan,
+  Monitor,
+  ShoppingCart,
+  Car,
+  Baby,
+} from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Thumbs, FreeMode, Autoplay } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
@@ -48,6 +64,36 @@ function Digit({ v, label }: { v: number; label: string }) {
 }
 
 /* ─────────────────────────────────────
+   Reveal hook
+───────────────────────────────────── */
+function useReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll(".reveal");
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("visible"); });
+    }, { threshold: 0.1 });
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
+}
+
+/* ─────────────────────────────────────
+   Section title
+───────────────────────────────────── */
+function SecTitle({ en, ja, center }: { en: string; ja: string; center?: boolean }) {
+  return (
+    <div className={`mb-8 md:mb-12 ${center ? "text-center" : ""}`}>
+      <p className="text-xs font-semibold tracking-[0.2em] text-gray-400 uppercase mb-2" style={{ fontFamily: "var(--font-en)" }}>
+        {en}
+      </p>
+      <h2 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight leading-tight">
+        {ja}
+      </h2>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────
    Product data
 ───────────────────────────────────── */
 const SLIDES = [
@@ -60,22 +106,22 @@ const SLIDES = [
 
 const FEATURES = [
   {
-    icon: "💧",
+    Icon: Droplets,
     title: "30秒でオゾン水を生成",
     desc: "スイッチひとつで約30秒後に使用可能。水道水・市販水どちらにも対応。",
   },
   {
-    icon: "✋",
+    Icon: Hand,
     title: "フィンガータイプで使いやすい",
     desc: "指に装着するだけのコンパクト設計。片手でスプレーできる直感的な操作感。",
   },
   {
-    icon: "🔋",
+    Icon: BatteryCharging,
     title: "USB充電式・繰り返し使える",
     desc: "充電式だからランニングコストほぼゼロ。旅行・アウトドアにも携帯可能。",
   },
   {
-    icon: "🌿",
+    Icon: Leaf,
     title: "洗剤・薬品不要",
     desc: "化学物質を一切使わないため環境負荷ゼロ。オゾンは使用後に水へ戻ります。",
   },
@@ -92,6 +138,7 @@ const SPECS = [
   { label: "保証", value: "初期不良対応" },
 ];
 
+const SCENE_ICONS = [UtensilsCrossed, SprayCan, Monitor, ShoppingCart, Car, Baby];
 const SCENES = [
   { label: "キッチン", desc: "食材・まな板・シンクの除菌に" },
   { label: "洗面所", desc: "洗面台・歯ブラシホルダーの清潔ケアに" },
@@ -100,53 +147,29 @@ const SCENES = [
   { label: "車内", desc: "ハンドル・シフトノブの除菌消臭に" },
   { label: "育児", desc: "おもちゃ・哺乳瓶まわりのケアに" },
 ];
+const SCENE_BG = ["#f0f4ff", "#f0fff4", "#fff7f0", "#fdf0ff", "#f0faff", "#fffbf0"];
+const SCENE_COLOR = ["#3b82f6", "#10b981", "#f97316", "#a855f7", "#06b6d4", "#eab308"];
 
 /* ─────────────────────────────────────
-   Use-scene image card
+   Trust badge strip (3-col)
 ───────────────────────────────────── */
-function SceneCard({ label, desc, index }: { label: string; desc: string; index: number }) {
-  const bg = ["#f0f4ff", "#f0fff4", "#fff7f0", "#fdf0ff", "#f0faff", "#fffbf0"][index % 6];
-  const em = ["🍽️", "🪥", "💻", "🛒", "🚗", "👶"][index % 6];
-  return (
-    <div className="feat-card rounded-2xl p-5 flex flex-col gap-3 border border-gray-100" style={{ background: bg }}>
-      <div className="text-3xl">{em}</div>
-      <div>
-        <p className="font-bold text-gray-900 text-sm">{label}</p>
-        <p className="text-gray-500 text-xs mt-1 leading-relaxed">{desc}</p>
-      </div>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────
-   Reveal hook
-───────────────────────────────────── */
-function useReveal() {
-  useEffect(() => {
-    const els = document.querySelectorAll(".reveal");
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("visible"); });
-    }, { threshold: 0.1 });
-    els.forEach((el) => obs.observe(el));
-    return () => obs.disconnect();
-  }, []);
-}
-
-/* ─────────────────────────────────────
-   Section title component
-───────────────────────────────────── */
-function SecTitle({ en, ja, center }: { en: string; ja: string; center?: boolean }) {
-  return (
-    <div className={`mb-8 md:mb-12 ${center ? "text-center" : ""}`}>
-      <p className="text-xs font-semibold tracking-[0.2em] text-gray-400 uppercase mb-2" style={{ fontFamily: "var(--font-en)" }}>
-        {en}
-      </p>
-      <h2 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight leading-tight">
-        {ja}
-      </h2>
-    </div>
-  );
-}
+const TRUST_BADGES = [
+  {
+    Icon: CreditCard,
+    title: "クレジットカード決済・銀行振込",
+    sub: "Stripe セキュア決済対応",
+  },
+  {
+    Icon: Truck,
+    title: "送料無料",
+    sub: "全国一律送料込み価格",
+  },
+  {
+    Icon: HeadphonesIcon,
+    title: "アフターフォロー対応",
+    sub: "初期不良・購入後サポート",
+  },
+];
 
 /* ─────────────────────────────────────
    Main page
@@ -174,15 +197,14 @@ export default function HomePage() {
     <div className="overflow-x-hidden" style={{ fontFamily: "var(--font-jp)", background: "#fff" }}>
 
       {/* ══════════════════════════════════════════════════════
-          § HERO — split layout: slider left / buy box right
+          § HERO — slider left / buy box right
       ══════════════════════════════════════════════════════ */}
       <section className="sec bg-white pt-6 pb-12 md:pt-10 md:pb-16">
         <div className="sec-inner">
           <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
 
-            {/* — Left: Slider — */}
+            {/* — Slider — */}
             <div className="w-full lg:w-[55%] lg:sticky lg:top-24">
-              {/* Main swiper */}
               <Swiper
                 modules={[Navigation, Pagination, Thumbs, Autoplay]}
                 thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
@@ -196,27 +218,16 @@ export default function HomePage() {
                 {SLIDES.map((s) => (
                   <SwiperSlide key={s.src}>
                     <div className="relative w-full h-full bg-gray-50 flex items-center justify-center" style={{ aspectRatio: "1/1" }}>
-                      <Image
-                        src={s.src}
-                        alt={s.alt}
-                        fill
-                        style={{ objectFit: "contain" }}
-                        sizes="(max-width: 1024px) 100vw, 55vw"
-                        priority={s.src === SLIDES[0].src}
-                      />
+                      <Image src={s.src} alt={s.alt} fill style={{ objectFit: "contain" }}
+                        sizes="(max-width: 1024px) 100vw, 55vw" priority={s.src === SLIDES[0].src} />
                     </div>
                   </SwiperSlide>
                 ))}
               </Swiper>
-
-              {/* Thumbs swiper */}
               <Swiper
                 modules={[FreeMode, Thumbs]}
                 onSwiper={setThumbsSwiper}
-                watchSlidesProgress
-                freeMode
-                spaceBetween={8}
-                slidesPerView={5}
+                watchSlidesProgress freeMode spaceBetween={8} slidesPerView={5}
                 className="thumb-swiper mt-3"
               >
                 {SLIDES.map((s) => (
@@ -229,40 +240,33 @@ export default function HomePage() {
               </Swiper>
             </div>
 
-            {/* — Right: Buy box — */}
+            {/* — Buy box — */}
             <div className="w-full lg:w-[45%]">
-              {/* Badge */}
               <div className="inline-flex items-center gap-2 bg-black text-white text-[11px] font-bold px-3 py-1.5 rounded-full mb-4">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
                 先行予約受付中
               </div>
-
-              {/* Title */}
               <h1 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-1" style={{ fontFamily: "var(--font-en)" }}>
                 ULAS O3 finger
               </h1>
               <p className="text-gray-500 text-sm leading-relaxed mb-6">
-                水からオゾン水を生成し、そのままスプレーできる<br />
-                コンパクト型オゾン水生成器
+                水からオゾン水を生成し、そのままスプレーできる<br />コンパクト型オゾン水生成器
               </p>
 
               {/* Price */}
               <div className="mb-6">
                 <div className="flex items-center gap-3 mb-0.5">
-                  <span className="text-4xl font-black text-gray-900 tracking-tight" style={{ fontFamily: "var(--font-en)" }}>
-                    ¥18,700
-                  </span>
+                  <span className="text-4xl font-black text-gray-900 tracking-tight" style={{ fontFamily: "var(--font-en)" }}>¥18,700</span>
                   <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">先行特価</span>
                 </div>
                 <p className="text-gray-400 text-sm">
-                  <span className="line-through mr-2">定価 ¥19,800</span>
-                  税込・送料込
+                  <span className="line-through mr-2">定価 ¥19,800</span>税込・送料込
                 </p>
               </div>
 
               {/* Delivery */}
-              <div className="flex items-center gap-2 bg-gray-50 rounded-xl px-4 py-3 mb-6 border border-gray-100">
-                <span className="text-xl">📦</span>
+              <div className="flex items-center gap-3 bg-gray-50 rounded-xl px-4 py-3 mb-6 border border-gray-100">
+                <Package size={18} className="text-gray-400 shrink-0" />
                 <div>
                   <p className="text-xs text-gray-400">お届け予定</p>
                   <p className="text-sm font-semibold text-gray-900">{PRODUCT.deliveryDate}（先着順）</p>
@@ -311,20 +315,42 @@ export default function HomePage() {
               </Link>
               <p className="text-center text-xs text-gray-400">先着順発送 · 予約締切 7/31 · クレカ / 銀行振込</p>
 
-              {/* Trust badges */}
+              {/* Mini trust badges (in buy box) */}
               <div className="grid grid-cols-3 gap-3 mt-6">
                 {[
-                  { icon: "🔒", label: "Stripe決済" },
-                  { icon: "📦", label: "送料込" },
-                  { icon: "🔄", label: "初期不良対応" },
-                ].map((b) => (
-                  <div key={b.label} className="flex flex-col items-center gap-1 bg-gray-50 rounded-xl py-3 border border-gray-100">
-                    <span className="text-xl">{b.icon}</span>
-                    <span className="text-[10px] text-gray-500 font-medium">{b.label}</span>
+                  { Icon: CreditCard, label: "Stripe決済" },
+                  { Icon: Truck, label: "送料込" },
+                  { Icon: HeadphonesIcon, label: "初期不良対応" },
+                ].map(({ Icon, label }) => (
+                  <div key={label} className="flex flex-col items-center gap-1.5 bg-gray-50 rounded-xl py-3 border border-gray-100">
+                    <Icon size={18} className="text-gray-500" strokeWidth={1.5} />
+                    <span className="text-[10px] text-gray-500 font-medium text-center leading-tight">{label}</span>
                   </div>
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════
+          § TRUST BADGE STRIP — 3カラム
+      ══════════════════════════════════════════════════════ */}
+      <section className="sec bg-white pb-12 md:pb-16">
+        <div className="sec-inner">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 reveal">
+            {TRUST_BADGES.map(({ Icon, title, sub }) => (
+              <div key={title}
+                className="flex items-center gap-4 bg-white rounded-2xl border border-gray-100 px-5 py-5 shadow-sm hover:shadow-md transition-shadow">
+                <div className="shrink-0 w-11 h-11 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center">
+                  <Icon size={22} className="text-gray-700" strokeWidth={1.5} />
+                </div>
+                <div>
+                  <p className="text-gray-900 text-sm font-bold leading-snug">{title}</p>
+                  <p className="text-gray-400 text-xs mt-0.5 leading-snug">{sub}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -351,15 +377,15 @@ export default function HomePage() {
       ══════════════════════════════════════════════════════ */}
       <section className="sec bg-white py-20 md:py-28">
         <div className="sec-inner">
-          <div className="reveal">
-            <SecTitle en="Features" ja="ULAS O3 fingerの特徴" center />
-          </div>
+          <div className="reveal"><SecTitle en="Features" ja="ULAS O3 fingerの特徴" center /></div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 reveal">
-            {FEATURES.map((f) => (
-              <div key={f.title} className="feat-card rounded-2xl border border-gray-100 p-6 bg-white">
-                <div className="text-4xl mb-4">{f.icon}</div>
-                <h3 className="font-bold text-gray-900 text-sm mb-2 leading-snug">{f.title}</h3>
-                <p className="text-gray-500 text-xs leading-relaxed">{f.desc}</p>
+            {FEATURES.map(({ Icon, title, desc }) => (
+              <div key={title} className="feat-card rounded-2xl border border-gray-100 p-6 bg-white">
+                <div className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center mb-4">
+                  <Icon size={20} className="text-gray-700" strokeWidth={1.5} />
+                </div>
+                <h3 className="font-bold text-gray-900 text-sm mb-2 leading-snug">{title}</h3>
+                <p className="text-gray-500 text-xs leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
@@ -371,22 +397,15 @@ export default function HomePage() {
       ══════════════════════════════════════════════════════ */}
       <section className="sec py-20 md:py-28" style={{ background: "#f7f7f7" }}>
         <div className="sec-inner-sm">
-          <div className="reveal">
-            <SecTitle en="How to Use" ja="使い方はシンプル3ステップ" center />
-          </div>
+          <div className="reveal"><SecTitle en="How to Use" ja="使い方はシンプル3ステップ" center /></div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 reveal">
             {[
               { n: "01", title: "水を入れる", desc: "水道水または市販の水を本体タンクに入れます。" },
               { n: "02", title: "スイッチを押す", desc: "ボタンを押すと電気分解が始まり、約30秒でオゾン水が生成されます。" },
               { n: "03", title: "スプレーする", desc: "生成されたオゾン水を手・キッチン・洗面所などに直接スプレー。" },
-            ].map((s, i) => (
+            ].map((s) => (
               <div key={s.n} className="text-center">
-                <div className="text-6xl font-black text-gray-100 mb-3 leading-none" style={{ fontFamily: "var(--font-en)" }}>
-                  {s.n}
-                </div>
-                {i < 2 && (
-                  <div className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 text-gray-200 text-2xl">→</div>
-                )}
+                <div className="text-6xl font-black text-gray-100 mb-3 leading-none" style={{ fontFamily: "var(--font-en)" }}>{s.n}</div>
                 <h3 className="font-bold text-gray-900 text-base mb-2">{s.title}</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">{s.desc}</p>
               </div>
@@ -400,11 +419,24 @@ export default function HomePage() {
       ══════════════════════════════════════════════════════ */}
       <section className="sec bg-white py-20 md:py-28">
         <div className="sec-inner">
-          <div className="reveal">
-            <SecTitle en="Use Cases" ja="あらゆる場面で活躍" center />
-          </div>
+          <div className="reveal"><SecTitle en="Use Cases" ja="あらゆる場面で活躍" center /></div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 reveal">
-            {SCENES.map((sc, i) => <SceneCard key={sc.label} {...sc} index={i} />)}
+            {SCENES.map((sc, i) => {
+              const Icon = SCENE_ICONS[i];
+              return (
+                <div key={sc.label}
+                  className="feat-card rounded-2xl p-5 flex flex-col gap-3 border border-gray-100"
+                  style={{ background: SCENE_BG[i] }}>
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: `${SCENE_COLOR[i]}18` }}>
+                    <Icon size={18} strokeWidth={1.5} style={{ color: SCENE_COLOR[i] }} />
+                  </div>
+                  <div>
+                    <p className="font-bold text-gray-900 text-sm">{sc.label}</p>
+                    <p className="text-gray-500 text-xs mt-1 leading-relaxed">{sc.desc}</p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -414,11 +446,9 @@ export default function HomePage() {
       ══════════════════════════════════════════════════════ */}
       <section className="sec py-20 md:py-28" style={{ background: "#f7f7f7" }}>
         <div className="sec-inner-sm">
-          <div className="reveal">
-            <SecTitle en="Specifications" ja="製品仕様" />
-          </div>
+          <div className="reveal"><SecTitle en="Specifications" ja="製品仕様" /></div>
           <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden reveal">
-            {SPECS.map((s, i) => (
+            {SPECS.map((s) => (
               <div key={s.label} className="spec-row flex items-start gap-4 px-6 py-4">
                 <span className="text-gray-400 text-xs w-28 shrink-0 pt-0.5 font-medium">{s.label}</span>
                 <span className="text-gray-900 text-sm font-semibold leading-relaxed">{s.value}</span>
@@ -433,26 +463,12 @@ export default function HomePage() {
       ══════════════════════════════════════════════════════ */}
       <section className="sec bg-black py-20 md:py-28">
         <div className="sec-inner-sm">
-          <div className="reveal">
-            <SecTitle en="Why Pre-order" ja="今すぐ予約する3つの理由" />
-          </div>
+          <div className="reveal"><SecTitle en="Why Pre-order" ja="今すぐ予約する3つの理由" /></div>
           <div className="space-y-4 reveal">
             {[
-              {
-                n: "01",
-                title: "先行予約特別価格",
-                body: "定価¥19,800のところ、先行予約価格¥18,700（税込・送料込）でご購入いただけます。一般販売開始後は定価に戻ります。",
-              },
-              {
-                n: "02",
-                title: "先着順発送",
-                body: "予約順に発送します。早くご予約いただくほど、お手元に早く届きます。",
-              },
-              {
-                n: "03",
-                title: "予約期間限定〜7/31",
-                body: "先行予約は2026年7月31日まで。期間終了後は予約受付を終了し、一般販売（定価）に切り替わります。",
-              },
+              { n: "01", title: "先行予約特別価格", body: "定価¥19,800のところ、先行予約価格¥18,700（税込・送料込）でご購入いただけます。一般販売開始後は定価に戻ります。" },
+              { n: "02", title: "先着順発送", body: "予約順に発送します。早くご予約いただくほど、お手元に早く届きます。" },
+              { n: "03", title: "予約期間限定〜7/31", body: "先行予約は2026年7月31日まで。期間終了後は予約受付を終了し、一般販売（定価）に切り替わります。" },
             ].map((r) => (
               <div key={r.n} className="flex gap-5 p-6 rounded-2xl border border-white/10 bg-white/5">
                 <span className="text-white/15 font-black text-4xl shrink-0 leading-none" style={{ fontFamily: "var(--font-en)" }}>{r.n}</span>
@@ -471,11 +487,7 @@ export default function HomePage() {
       ══════════════════════════════════════════════════════ */}
       <section id="reservation" ref={formRef} className="sec bg-white py-20 md:py-28">
         <div className="sec-inner-sm">
-          <div className="reveal">
-            <SecTitle en="Pre-order" ja="先行予約フォーム" />
-          </div>
-
-          {/* Price + delivery summary */}
+          <div className="reveal"><SecTitle en="Pre-order" ja="先行予約フォーム" /></div>
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-50 border border-gray-100 rounded-2xl px-6 py-5 mb-8 reveal">
             <div>
               <p className="text-xs text-gray-400 mb-0.5">先行予約特別価格</p>
@@ -495,7 +507,6 @@ export default function HomePage() {
               <p className="text-xs text-gray-400 mt-0.5">Stripe 決済対応</p>
             </div>
           </div>
-
           <div className="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-sm reveal">
             <ReservationForm />
           </div>
@@ -503,7 +514,7 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          § CAUTIONS + TOKUSHOHO — gray
+          § CAUTIONS — gray
       ══════════════════════════════════════════════════════ */}
       <section className="sec py-16 md:py-20" style={{ background: "#f7f7f7" }}>
         <div className="sec-inner-sm">
