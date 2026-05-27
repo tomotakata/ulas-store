@@ -129,13 +129,13 @@ const FEATURES = [
 
 const SPECS = [
   { label: "製品名", value: "ULAS O3 finger" },
-  { label: "タイプ", value: "フィンガータイプ オゾン水生成器" },
-  { label: "電源", value: "USB充電式" },
-  { label: "重量", value: "約50g（予定）" },
-  { label: "カラー", value: "ホワイト" },
-  { label: "販売価格", value: "¥18,700（税込・送料込）" },
-  { label: "お届け予定", value: "2026年10月上旬（9月中目標）" },
-  { label: "保証", value: "初期不良対応" },
+  { label: "外形寸法", value: "約 H130mm × W32mm × D32mm" },
+  { label: "タンク容量", value: "18mL" },
+  { label: "生成時間", value: "約30秒" },
+  { label: "オゾン濃度", value: "1.0〜1.5（目安）" },
+  { label: "充電方式", value: "USB-C" },
+  { label: "噴霧方式", value: "手動ポンプ式スプレー" },
+  { label: "バッテリー", value: "リチウムポリマー電池" },
 ];
 
 const SCENE_ICONS = [UtensilsCrossed, SprayCan, Monitor, ShoppingCart, Car, Baby];
@@ -616,6 +616,11 @@ export default function HomePage() {
                 <span className="text-gray-900 text-sm font-semibold leading-relaxed">{s.value}</span>
               </div>
             ))}
+          </div>
+          <div className="mt-4 space-y-1 reveal">
+            <p className="text-gray-400 text-xs">※オゾン濃度は、水質・水温・使用環境等により変動する場合があります</p>
+            <p className="text-gray-400 text-xs">※仕様は改良のため、予告なく変更となる場合があります</p>
+            <p className="text-gray-400 text-xs">※当製品は特許出願中です</p>
           </div>
         </div>
       </section>
