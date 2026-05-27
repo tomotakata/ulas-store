@@ -442,10 +442,12 @@ export default function HomePage() {
             {/* Card 1 */}
             <div className="rounded-2xl bg-gray-50 p-7 flex gap-5">
               <div className="shrink-0 w-16 h-16 rounded-2xl bg-white border border-gray-100 flex items-center justify-center">
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                  <path d="M5 12h-2M12 5V3M19 12h2" strokeOpacity="0.35"/>
-                  <text x="6" y="16" fontSize="7" fontWeight="bold" fill="#3b82f6" stroke="none">30</text>
+                {/* Stopwatch with speed lines */}
+                <svg width="36" height="36" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="27" cy="28" r="15" stroke="#3b82f6" strokeWidth="2.5"/>
+                  <path d="M27 13V10M23 10h8" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round"/>
+                  <path d="M27 20v9l5 3" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M9 22h5M7 27h5M9 32h5" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round"/>
                 </svg>
               </div>
               <div>
@@ -456,9 +458,15 @@ export default function HomePage() {
             {/* Card 2 */}
             <div className="rounded-2xl bg-gray-50 p-7 flex gap-5">
               <div className="shrink-0 w-16 h-16 rounded-2xl bg-white border border-gray-100 flex items-center justify-center">
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 12l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2"/>
-                  <path d="M15 3s1 1 1 3" /><path d="M18 3s2 2 2 6" />
+                {/* Spray bottle */}
+                <svg width="36" height="36" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 38V22h-4v-6h4v-4h8v4l4 4v4h-4v14H18z" stroke="#3b82f6" strokeWidth="2.5" strokeLinejoin="round"/>
+                  <path d="M26 16h6" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round"/>
+                  <circle cx="36" cy="13" r="1.2" fill="#3b82f6"/>
+                  <circle cx="39" cy="17" r="1.2" fill="#3b82f6"/>
+                  <circle cx="40" cy="11" r="1.2" fill="#3b82f6"/>
+                  <circle cx="38" cy="21" r="1" fill="#3b82f6"/>
+                  <circle cx="42" cy="15" r="1" fill="#3b82f6"/>
                 </svg>
               </div>
               <div>
