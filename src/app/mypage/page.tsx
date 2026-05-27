@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { BANK_TRANSFER } from "@/lib/constants";
 
 interface User {
   id: string;
@@ -297,9 +298,40 @@ export default function MyPage() {
 
                     {/* Bank transfer notice */}
                     {r.paymentMethod === "BANK_TRANSFER" && r.paymentStatus === "PENDING" && (
-                      <div className="px-6 py-4 bg-amber-50 border-t border-amber-100 text-xs text-amber-700">
-                        <p className="font-semibold mb-1">お振込みをお待ちしております</p>
-                        <p>ご注文日より3営業日以内にお振込みください。確認後、予約確定となります。</p>
+                      <div className="px-6 py-5 bg-amber-50 border-t border-amber-100">
+                        <p className="text-xs font-bold text-amber-700 mb-3">お振込みをお待ちしております</p>
+                        <div className="bg-white border border-amber-200 rounded-xl p-4 mb-3">
+                          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">振込先口座</p>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-3 gap-x-4 text-sm">
+                            <div>
+                              <p className="text-xs text-gray-400 mb-0.5">銀行名</p>
+                              <p className="font-semibold text-gray-900">{BANK_TRANSFER.bankName}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-400 mb-0.5">支店名</p>
+                              <p className="font-semibold text-gray-900">{BANK_TRANSFER.branchName}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-400 mb-0.5">口座種別</p>
+                              <p className="font-semibold text-gray-900">{BANK_TRANSFER.accountType}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-400 mb-0.5">口座番号</p>
+                              <p className="font-bold text-gray-900 text-base tracking-wider">{BANK_TRANSFER.accountNumber}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-400 mb-0.5">口座名義</p>
+                              <p className="font-semibold text-gray-900">{BANK_TRANSFER.accountName}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-400 mb-0.5">振込金額</p>
+                              <p className="font-bold text-gray-900">¥{r.totalAmount.toLocaleString()}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <p className="text-xs text-amber-700">
+                          振込期限: <span className="font-semibold">{BANK_TRANSFER.deadline}</span>。確認後、予約確定のご連絡をいたします。
+                        </p>
                       </div>
                     )}
                   </div>
