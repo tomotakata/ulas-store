@@ -235,7 +235,7 @@ export default function ReservationForm() {
             処理中...
           </span>
         ) : (
-          "予約を確定する →"
+          "予約を進める →"
         )}
       </button>
 
