@@ -29,7 +29,18 @@ import ReservationForm from "@/components/ui/ReservationForm";
    Countdown hook
 ───────────────────────────────────── */
 function useCountdown(target: Date) {
-  const [t, setT] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, past: false });
+  const calcInitial = () => {
+    const diff = target.getTime() - Date.now();
+    if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, past: true };
+    return {
+      days: Math.floor(diff / 86400000),
+      hours: Math.floor((diff % 86400000) / 3600000),
+      minutes: Math.floor((diff % 3600000) / 60000),
+      seconds: Math.floor((diff % 60000) / 1000),
+      past: false,
+    };
+  };
+  const [t, setT] = useState(calcInitial);
   useEffect(() => {
     const calc = () => {
       const diff = target.getTime() - Date.now();
