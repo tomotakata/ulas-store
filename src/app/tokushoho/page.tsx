@@ -4,8 +4,8 @@ import { COMPANY, PRODUCT, BANK_TRANSFER } from "@/lib/constants";
 export default function TokushohoPage() {
   const items = [
     { label: "販売業者", value: COMPANY.name },
-    { label: "運営責任者", value: "（準備中）" },
-    { label: "所在地", value: "（準備中）" },
+    { label: "運営責任者", value: "森行秀和" },
+    { label: "所在地", value: "〒107-0061 東京都港区北青山1-2-18" },
     { label: "電話番号", value: "お問い合わせはメールにて承ります" },
     { label: "メールアドレス", value: COMPANY.email, isEmail: true },
     { label: "販売URL", value: COMPANY.url, isLink: true },
