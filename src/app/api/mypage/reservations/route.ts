@@ -48,6 +48,7 @@ export async function PATCH(req: NextRequest) {
       shippingZip: shippingZip ?? reservation.shippingZip,
       shippingAddress: shippingAddress ?? reservation.shippingAddress,
       shippingPhone: shippingPhone ?? reservation.shippingPhone,
+      addressUpdatedAt: new Date(),
     },
   });
 

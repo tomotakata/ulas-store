@@ -7,6 +7,7 @@ interface Reservation {
   id: string; createdAt: string; totalAmount: number;
   paymentMethod: string; paymentStatus: string; reservationStatus: string;
   shippingName: string; shippingZip: string; shippingAddress: string; shippingPhone: string;
+  addressUpdatedAt: string | null;
   user: { email: string; name: string | null };
   product: { name: string; price: number };
 }
@@ -144,7 +145,17 @@ export default function SalesPage() {
               <tr key={r.id} className="border-b border-gray-50 hover:bg-gray-50">
                 <td className="px-4 py-3 text-xs text-gray-500">{new Date(r.createdAt).toLocaleString("ja-JP")}</td>
                 <td className="px-4 py-3">
-                  <p className="font-medium text-gray-900">{r.shippingName}</p>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <p className="font-medium text-gray-900">{r.shippingName}</p>
+                    {r.addressUpdatedAt && (
+                      <span className="inline-flex items-center gap-1 bg-orange-100 text-orange-700 text-xs font-semibold px-1.5 py-0.5 rounded-full border border-orange-200 whitespace-nowrap">
+                        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        住所変更
+                      </span>
+                    )}
+                  </div>
                   <p className="text-xs text-gray-400">{r.user.email}</p>
                 </td>
                 <td className="px-4 py-3 font-semibold">¥{r.totalAmount.toLocaleString()}</td>

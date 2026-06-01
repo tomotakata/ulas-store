@@ -16,7 +16,7 @@ export async function GET() {
       id: true, email: true, name: true, phone: true, isAdmin: false,
       createdAt: true,
       reservations: {
-        select: { id: true, paymentStatus: true, totalAmount: true },
+        select: { id: true, paymentStatus: true, totalAmount: true, addressUpdatedAt: true },
       },
     },
     where: { isAdmin: false },
