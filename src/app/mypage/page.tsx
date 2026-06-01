@@ -246,8 +246,16 @@ function MyPageContent() {
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
+    // URLにmagicリンクのtokenがある場合は既存セッションを無視してトークン処理へ
+    const token = searchParams.get("token");
+    if (token) {
+      setLoading(false); // LoginFormにtokenを処理させる
+      return;
+    }
+
     fetch("/api/auth/me")
       .then((r) => r.json())
       .then((data) => {
@@ -264,7 +272,7 @@ function MyPageContent() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, []);
+  }, [searchParams]);
 
   const handleAddressSave = useCallback((updated: Reservation) => {
     setReservations(prev => prev.map(r => r.id === updated.id ? updated : r));
