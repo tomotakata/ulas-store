@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BANK_TRANSFER } from "@/lib/constants";
@@ -23,6 +23,7 @@ interface Reservation {
   shippingName: string;
   shippingZip: string;
   shippingAddress: string;
+  shippingPhone: string;
   product: { name: string };
 }
 
@@ -40,6 +41,8 @@ const PAYMENT_STATUS: Record<string, { label: string; color: string }> = {
   FAILED:  { label: "支払失敗", color: "text-red-600" },
 };
 
+const EDITABLE_STATUSES = ["WAITING", "CONFIRMED"];
+
 function ReservationStatusBadge({ status }: { status: string }) {
   const s = RESERVATION_STATUS[status] ?? { label: status, color: "text-gray-600 bg-gray-50 border-gray-200", dot: "bg-gray-400" };
   return (
@@ -47,6 +50,81 @@ function ReservationStatusBadge({ status }: { status: string }) {
       <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
       {s.label}
     </span>
+  );
+}
+
+// 住所変更フォーム
+function AddressEditForm({ reservation, onSave, onCancel }: {
+  reservation: Reservation;
+  onSave: (updated: Reservation) => void;
+  onCancel: () => void;
+}) {
+  const [form, setForm] = useState({
+    shippingName: reservation.shippingName,
+    shippingZip: reservation.shippingZip,
+    shippingAddress: reservation.shippingAddress,
+    shippingPhone: reservation.shippingPhone,
+  });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSaving(true); setError("");
+    const res = await fetch("/api/mypage/reservations", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reservationId: reservation.id, ...form }),
+    });
+    const data = await res.json();
+    if (!res.ok) { setError(data.error || "変更に失敗しました"); setSaving(false); return; }
+    onSave({ ...reservation, ...form });
+    setSaving(false);
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="px-6 py-5 bg-blue-50 border-t border-blue-100">
+      <p className="text-xs font-bold text-blue-700 mb-4">お届け先住所の変更</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+        <div>
+          <label className="block text-xs text-gray-500 mb-1">お名前</label>
+          <input type="text" required value={form.shippingName}
+            onChange={e => setForm(f => ({ ...f, shippingName: e.target.value }))}
+            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" />
+        </div>
+        <div>
+          <label className="block text-xs text-gray-500 mb-1">電話番号</label>
+          <input type="tel" value={form.shippingPhone}
+            onChange={e => setForm(f => ({ ...f, shippingPhone: e.target.value }))}
+            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" />
+        </div>
+        <div>
+          <label className="block text-xs text-gray-500 mb-1">郵便番号（ハイフンなし）</label>
+          <input type="text" required value={form.shippingZip} maxLength={7}
+            onChange={e => setForm(f => ({ ...f, shippingZip: e.target.value.replace(/[^0-9]/g, "") }))}
+            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            placeholder="1070061" />
+        </div>
+        <div>
+          <label className="block text-xs text-gray-500 mb-1">住所</label>
+          <input type="text" required value={form.shippingAddress}
+            onChange={e => setForm(f => ({ ...f, shippingAddress: e.target.value }))}
+            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            placeholder="東京都港区北青山1-2-18" />
+        </div>
+      </div>
+      {error && <p className="text-red-500 text-xs mb-3">{error}</p>}
+      <div className="flex gap-2">
+        <button type="submit" disabled={saving}
+          className="bg-gray-900 text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-gray-700 disabled:opacity-50">
+          {saving ? "保存中..." : "変更を保存する"}
+        </button>
+        <button type="button" onClick={onCancel}
+          className="bg-white border border-gray-200 text-gray-700 rounded-lg px-4 py-2 text-sm font-semibold hover:bg-gray-50">
+          キャンセル
+        </button>
+      </div>
+    </form>
   );
 }
 
@@ -58,11 +136,9 @@ function LoginForm({ onLogin }: { onLogin: (user: User) => void }) {
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
 
-  // URLにtokenがあれば自動的に検証
   useEffect(() => {
     const token = searchParams.get("token");
     if (!token) return;
-
     fetch("/api/auth/magic-verify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -70,19 +146,15 @@ function LoginForm({ onLogin }: { onLogin: (user: User) => void }) {
     })
       .then((r) => r.json())
       .then((data) => {
-        if (data.user) {
-          onLogin(data.user);
-        } else {
-          setError(data.error || "リンクが無効です。再度お試しください。");
-        }
+        if (data.user) onLogin(data.user);
+        else setError(data.error || "リンクが無効です。再度お試しください。");
       })
       .catch(() => setError("通信エラーが発生しました"));
   }, [searchParams, onLogin]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
-    setLoading(true);
+    setError(null); setLoading(true);
     try {
       const res = await fetch("/api/auth/magic-link", {
         method: "POST",
@@ -92,14 +164,10 @@ function LoginForm({ onLogin }: { onLogin: (user: User) => void }) {
       const data = await res.json();
       if (!res.ok) { setError(data.error || "送信に失敗しました"); return; }
       setSent(true);
-    } catch {
-      setError("通信エラーが発生しました");
-    } finally {
-      setLoading(false);
-    }
+    } catch { setError("通信エラーが発生しました"); }
+    finally { setLoading(false); }
   }
 
-  // tokenが存在する場合はローディング表示
   if (searchParams.get("token") && !error) {
     return (
       <div className="min-h-screen bg-[#fafafa] flex items-center justify-center">
@@ -118,11 +186,9 @@ function LoginForm({ onLogin }: { onLogin: (user: User) => void }) {
           <Link href="/" className="text-sm font-semibold tracking-widest text-gray-900 uppercase">ULAS</Link>
         </div>
       </header>
-
       <div className="flex-1 flex items-center justify-center px-4 py-16">
         <div className="w-full max-w-sm">
           {sent ? (
-            // 送信完了画面
             <div className="text-center">
               <div className="w-14 h-14 rounded-full bg-green-50 border border-green-200 mx-auto mb-5 flex items-center justify-center">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -130,20 +196,15 @@ function LoginForm({ onLogin }: { onLogin: (user: User) => void }) {
                 </svg>
               </div>
               <h1 className="text-xl font-bold text-gray-900 mb-2">メールを送信しました</h1>
-              <p className="text-sm text-gray-500 mb-1">
-                <span className="font-semibold text-gray-700">{email}</span> に
-              </p>
+              <p className="text-sm text-gray-500 mb-1"><span className="font-semibold text-gray-700">{email}</span> に</p>
               <p className="text-sm text-gray-500 mb-6">ログインリンクを送信しました。<br />メールに記載のリンクをクリックしてください。</p>
               <p className="text-xs text-gray-400">リンクの有効期限は15分です。<br />届かない場合は迷惑メールフォルダをご確認ください。</p>
-              <button
-                onClick={() => { setSent(false); setEmail(""); }}
-                className="mt-6 text-xs text-gray-400 underline underline-offset-2 hover:text-gray-600 transition-colors"
-              >
+              <button onClick={() => { setSent(false); setEmail(""); }}
+                className="mt-6 text-xs text-gray-400 underline underline-offset-2 hover:text-gray-600 transition-colors">
                 別のアドレスで試す
               </button>
             </div>
           ) : (
-            // メール入力フォーム
             <>
               <div className="text-center mb-8">
                 <div className="w-10 h-10 rounded-full bg-gray-900 mx-auto mb-4 flex items-center justify-center">
@@ -154,30 +215,19 @@ function LoginForm({ onLogin }: { onLogin: (user: User) => void }) {
                 <h1 className="text-xl font-bold text-gray-900">マイページ</h1>
                 <p className="text-sm text-gray-500 mt-1">メールアドレスを入力するとログインリンクを送信します</p>
               </div>
-
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm mb-5">
-                  {error}
-                </div>
-              )}
-
+              {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm mb-5">{error}</div>}
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1.5 uppercase tracking-wide">メールアドレス</label>
-                  <input
-                    type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
                     className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition"
-                    placeholder="ご購入時のメールアドレス"
-                  />
+                    placeholder="ご購入時のメールアドレス" />
                 </div>
-                <button
-                  type="submit" disabled={loading}
-                  className="w-full bg-gray-900 hover:bg-gray-800 disabled:opacity-50 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
-                >
+                <button type="submit" disabled={loading}
+                  className="w-full bg-gray-900 hover:bg-gray-800 disabled:opacity-50 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm">
                   {loading ? "送信中..." : "ログインリンクを送信"}
                 </button>
               </form>
-
               <p className="text-center text-xs text-gray-400 mt-6">
                 まだご予約されていませんか?{" "}
                 <Link href="/#reservation" className="text-gray-900 underline underline-offset-2">先行予約はこちら</Link>
@@ -194,6 +244,7 @@ function MyPageContent() {
   const [user, setUser] = useState<User | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -215,10 +266,14 @@ function MyPageContent() {
       .catch(() => setLoading(false));
   }, []);
 
+  const handleAddressSave = useCallback((updated: Reservation) => {
+    setReservations(prev => prev.map(r => r.id === updated.id ? updated : r));
+    setEditingId(null);
+  }, []);
+
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
-    setUser(null);
-    setReservations([]);
+    setUser(null); setReservations([]);
     router.push("/");
   }
 
@@ -239,10 +294,7 @@ function MyPageContent() {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
           <Link href="/" className="text-sm font-semibold tracking-widest text-gray-900 uppercase">ULAS</Link>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors"
-          >
+          <button onClick={handleLogout} className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
             </svg>
@@ -295,8 +347,12 @@ function MyPageContent() {
             <div className="space-y-4">
               {reservations.map((r) => {
                 const ps = PAYMENT_STATUS[r.paymentStatus] ?? { label: r.paymentStatus, color: "text-gray-600" };
+                const canEdit = EDITABLE_STATUSES.includes(r.reservationStatus);
+                const isEditing = editingId === r.id;
+
                 return (
                   <div key={r.id} className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                    {/* ヘッダー */}
                     <div className="px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                       <div>
                         <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">予約番号</p>
@@ -308,6 +364,7 @@ function MyPageContent() {
                       </div>
                     </div>
 
+                    {/* 商品情報 */}
                     <div className="px-6 py-5 grid grid-cols-2 sm:grid-cols-4 gap-5 text-sm">
                       <div>
                         <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">商品</p>
@@ -331,15 +388,37 @@ function MyPageContent() {
                       </div>
                     </div>
 
-                    {r.shippingAddress && (
-                      <div className="px-6 py-3 bg-gray-50 border-t border-gray-100 flex items-start gap-2 text-xs text-gray-500">
+                    {/* お届け先 */}
+                    <div className="px-6 py-3 bg-gray-50 border-t border-gray-100 flex items-start justify-between gap-2">
+                      <div className="flex items-start gap-2 text-xs text-gray-500">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0">
                           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
                         </svg>
-                        <span>お届け先: 〒{r.shippingZip} {r.shippingAddress}</span>
+                        <span>
+                          {r.shippingName} 様　〒{r.shippingZip} {r.shippingAddress}
+                          {r.shippingPhone && `　${r.shippingPhone}`}
+                        </span>
                       </div>
+                      {canEdit && !isEditing && (
+                        <button
+                          onClick={() => setEditingId(r.id)}
+                          className="shrink-0 text-xs text-blue-600 hover:text-blue-800 font-semibold underline underline-offset-2"
+                        >
+                          住所を変更する
+                        </button>
+                      )}
+                    </div>
+
+                    {/* 住所変更フォーム */}
+                    {isEditing && (
+                      <AddressEditForm
+                        reservation={r}
+                        onSave={handleAddressSave}
+                        onCancel={() => setEditingId(null)}
+                      />
                     )}
 
+                    {/* 銀行振込案内 */}
                     {r.paymentMethod === "BANK_TRANSFER" && r.paymentStatus === "PENDING" && (
                       <div className="px-6 py-5 bg-amber-50 border-t border-amber-100">
                         <p className="text-xs font-bold text-amber-700 mb-3">お振込みをお待ちしております</p>
