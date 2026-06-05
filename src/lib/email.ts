@@ -77,8 +77,10 @@ export async function sendPaymentRecoveryEmail(
             <h1 style="font-size: 20px; font-weight: 700; margin: 0 0 8px;">お手続きが完了していません</h1>
             <p style="font-size: 14px; color: #555; margin: 0 0 24px;">${name} 様</p>
             <p style="font-size: 14px; color: #555; margin: 0 0 20px;">
-              先日ご入力いただいた <strong>ULAS O3 finger</strong> のご予約ですが、<br />
-              カード情報のご入力が完了していないため、予約が確定されておりません。
+              <strong>ULAS O3 finger</strong> のご予約ありがとうございます。<br /><br />
+              ご予約情報を確認させていただき、お客様用の予約商品の枠を確保させていただきました。<br />
+              決済情報の入力が完了していないため、下記のボタンより決済情報を入力いただき、<br />
+              決済完了をお手数ですが、よろしくお願い致します。
             </p>
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 14px;">
               <tr style="border-bottom: 1px solid #eee;"><td style="padding: 10px 0; color: #888; width: 40%;">予約番号</td><td style="padding: 10px 0; font-family: monospace; font-weight: 600;">${reservationId}</td></tr>
