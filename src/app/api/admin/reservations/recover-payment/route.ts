@@ -76,6 +76,7 @@ export async function POST(req: NextRequest) {
       id: { in: reservationIds },
       paymentMethod: "CARD",
       paymentStatus: "PENDING",
+      reservationStatus: { not: "CANCELLED" },
     },
     include: { user: true },
   });
@@ -103,6 +104,7 @@ export async function GET() {
     where: {
       paymentMethod: "CARD",
       paymentStatus: "PENDING",
+      reservationStatus: { not: "CANCELLED" },
     },
     include: {
       user: { select: { id: true, email: true, name: true } },
